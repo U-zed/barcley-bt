@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+/* ---------- ROOT TOKENS ---------- */
+:root {
+  --background: #020617; /* slate-950 */
+  --foreground: #ffffff;
+  --muted: #cbd5e1;      /* slate-300 */
+  --border: #1e293b;     /* slate-800 */
+}
+
+/* ---------- TAILWIND THEME ---------- */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ---------- BASE ---------- */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- TEXT CLARITY ---------- */
+p,
+span,
+label,
+input,
+textarea {
+  color: var(--foreground);
+}
+
+small,
+.text-muted {
+  color: var(--muted);
+}
+
+/* ---------- HEADINGS ---------- */
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- FORMS ---------- */
+input,
+select,
+textarea {
+  background-color: #020617; /* slate-950 */
+  border: 1px solid var(--border);
+  color: #ffffff;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #94a3b8; /* slate-400 */
+}
