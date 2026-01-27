@@ -19,7 +19,7 @@
 }
 
 /* ---------- BASE ---------- */
-body {
+/* body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system,
@@ -28,16 +28,16 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-}
+} */
 
 /* ---------- TEXT CLARITY ---------- */
-p,
+/* p,
 span,
 label,
 input,
 textarea {
   color: var(--foreground);
-}
+} */
 
 small,
 .text-muted {
@@ -45,22 +45,22 @@ small,
 }
 
 /* ---------- HEADINGS ---------- */
-h1, h2, h3, h4, h5, h6 {
+/* h1, h2, h3, h4, h5, h6 {
   color: #ffffff;
   font-weight: 600;
   letter-spacing: -0.01em;
-}
+} */
 
 /* ---------- FORMS ---------- */
 input,
 select,
 textarea {
-  background-color: #020617; /* slate-950 */
+  background-color: #c9cbd6; /* slate-950 */
   border: 1px solid var(--border);
-  color: #ffffff;
+  color: #000000;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #94a3b8; /* slate-400 */
+  color: #ffffff; /* slate-400 */
 }

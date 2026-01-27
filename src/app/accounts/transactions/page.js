@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebaseClient";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(10);
 
   useEffect(() => {
     const q = query(
@@ -24,55 +26,61 @@ export default function TransactionsPage() {
     return () => unsub();
   }, []);
 
+
+ const toggleView = () => {
+    setVisibleCount((prev) => (prev === 10 ? 20 : 10));
+  };
+
   return (
-    <div className="min-h-screen p-8 bg-slate-950 text-white">
-      <h1 className="text-3xl font-bold mb-6">Transaction History</h1>
+    <div className="min-h-screen px-4 py-8 bg-white mt-20">
+      <h2 className="text-2xl font-bold mb-4 text-blue-900 text-center">
+        Transaction History
+      </h2>
+      <p className="text-sm text-gray-800 mb-6 text-center">
+        Review your recent payments and transfers. Only transactions made through supported banks are listed.
+      </p>
 
-      <div className="bg-slate-900 rounded-xl shadow overflow-x-auto border border-slate-800">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-800 text-slate-300 text-left">
-            <tr>
-              <th className="p-3">Type</th>
-              <th className="p-3">From / Sender</th>
-              <th className="p-3">To / Recipient</th>
-              <th className="p-3">Account</th>
-              <th className="p-3">Amount</th>
-              <th className="p-3">Date</th>
-            </tr>
-          </thead>
+      <section className="flex flex-col  max-w-2xl mx-auto">
+        {transactions.length === 0 && (
+          <p className="text-center text-gray-500">No transactions found.</p>
+        )}
 
-          <tbody>
-            {transactions.map((tx) => (
-              <tr
-                key={tx.id}
-                className="border-t border-slate-800 hover:bg-slate-800/50"
-              >
-                <td className="p-3 capitalize">
-                  {tx.type || "deposit"}
-                </td>
+        {transactions.slice(0, visibleCount).map((tx) => (
+          <div
+            key={tx.id}
+            className="bg-gray-50 border-t border-gray-200  p-1  hover:bg-gray-300 -md transition"
+          >
+            <div className="flex justify-between p-1 ">
+                 <p className="text-gray-900 font-semibold text-lg">{tx.recipientName || tx.senderName || "—"}</p>
+              <div className="bg-gray-100 h-fit rounded-full p-1 text-right">
+                {tx.type === "transfer" ? (
+                  <ArrowUp className="text-red-600 w-3 h-3" />
+                ) : (
+                  <ArrowDown className="text-green-600 w-3 h-3" />
+                )}
+              </div>
+                        </div>
 
-                
+            <div className="flex justify-between p-1">
+                         <p className="text-gray-600 text-xs text-left">
+                {tx.createdAt?.toDate().toLocaleString() || "—"}
+              </p>
+                <p className="font-semibold text-xl text-black text-right ">${tx.amount?.toLocaleString() || "0"}</p>
+            </div>
+          </div>
+        ))}
+      </section>
 
-                <td className="p-3">
-                  {tx.recipientName || "—"}
-                </td>
-
-                <td className="p-3 font-mono">
-                  {tx.senderAccount || tx.recipientAccount || "—"}
-                </td>
-
-                <td className="p-3 font-semibold">
-                  ${tx.amount?.toLocaleString()}
-                </td>
-
-                <td className="p-3 text-slate-400">
-                  {tx.createdAt?.toDate().toLocaleString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      
+      {/* Sticky View More / Less Button */}
+      {transactions.length > 10 && (
+        <button
+          onClick={toggleView}
+          className="fixed bottom-5 right-5 bg-blue-900 text-white text-sm px-3 py-2 rounded-full shadow-lg hover:bg-blue-950 transition"
+        >
+          {visibleCount === 10 ? "View More" : "View Less"}
+        </button>
+      )}
     </div>
   );
 }

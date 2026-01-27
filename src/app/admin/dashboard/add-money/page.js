@@ -22,66 +22,71 @@ export default function AddMoneyPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage("");
 
-    if (!account || !senderName || !senderAccount || !amount) {
-      setMessage("❌ Please fill all fields");
-      setLoading(false);
-      return;
-    }
+  if (!account || !senderName || !senderAccount || !amount) {
+    setMessage("❌ Please fill all fields");
+    setLoading(false);
+    return;
+  }
 
-    try {
-      const accRef = doc(db, "accounts", account);
-      const accSnap = await getDoc(accRef);
+  try {
+    const accRef = doc(db, "accounts", account);
+    const accSnap = await getDoc(accRef);
 
+    // Determine default account number based on account type
+    const defaultNumber =
+      account === "checking"
+        ? "1234567890123042"
+        : account === "savings"
+        ? "9876543210987012"
+        : account === "business"
+        ? "5555666677777388"
+        : "1111222233334444";
+
+    if (!accSnap.exists()) {
       // ✅ Create account if it doesn't exist
-      if (!accSnap.exists()) {
-        await setDoc(accRef, {
-          balance: Number(amount),
-          accountNumber:
-            account === "checking"
-              ? "1234567890123042"
-              : account === "savings"
-              ? "9876543210987012"
-              : account === "business"
-              ? "5555666677777388"
-              : "1111222233334444",
-        });
-      } else {
-        // ✅ Increment balance
-        await updateDoc(accRef, {
-          balance: increment(Number(amount)),
-        });
-      }
-
-      // ✅ Save transaction
-      await addDoc(collection(db, "transactions"), {
-        account,
-        senderName,
-        senderAccount,
-        amount: Number(amount),
-        createdAt: serverTimestamp(),
+      await setDoc(accRef, {
+        balance: Number(amount),
+        accountNumber: defaultNumber,
       });
-
-      setMessage("✅ Money added successfully");
-
-      // ✅ CLEAR FORM
-      setAccount("");
-      setSenderName("");
-      setSenderAccount("");
-      setAmount("");
-
-      setTimeout(() => setMessage(""), 3000);
-    } catch (err) {
-      console.error(err);
-      setMessage("❌ Failed to add money");
-    } finally {
-      setLoading(false);
+    } else {
+      // ✅ Increment balance and backfill accountNumber if missing
+      await updateDoc(accRef, {
+        balance: increment(Number(amount)),
+        accountNumber: accSnap.data().accountNumber || defaultNumber,
+      });
     }
-  };
+
+    // ✅ Save transaction
+    await addDoc(collection(db, "transactions"), {
+      account,
+      senderName,
+      senderAccount,
+      amount: Number(amount),
+      createdAt: serverTimestamp(),
+    });
+
+    setMessage("✅ Money added successfully");
+
+    // ✅ Clear form
+    setAccount("");
+    setSenderName("");
+    setSenderAccount("");
+    setAmount("");
+
+    setTimeout(() => setMessage(""), 3000);
+  } catch (err) {
+    console.error(err);
+    setMessage("❌ Failed to add money");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-slate-950 text-white p-8">

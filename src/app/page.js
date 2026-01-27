@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+
 
 
 export default function Page() {
@@ -35,9 +37,28 @@ export default function Page() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+      <motion.h1
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 90, damping: 12 }}
+          className="text-2xl md:text-4xl font-extrabold text-orange-500 text-center my-8"
+        >
+          Welcome to Barcley Bank & Trust (BB&T) Guest Access
+        </motion.h1>
+
+        <motion.p
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3, type: "spring", stiffness: 70 }}
+          className="p-2 text-md md:text-xl text-white text-center max-w-lg"
+        >
+          A secure and intuitive environment designed exclusively for authorized guests to explore essential account features and financial management experiences.
+        </motion.p>
+
+     
       <form onSubmit={handleLogin} className="bg-slate-900 p-8 rounded-xl w-96">
-        <h1 className="text-3xl font-bold mb-6 text-center">BB&T User Login</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center"> Login </h1>
         {error && <p className="mb-4 text-red-500 text-sm text-center">{error}</p>}
 
         <input
