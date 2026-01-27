@@ -5,9 +5,11 @@ import { db } from "@/lib/firebaseClient";
 import { collection, onSnapshot } from "firebase/firestore";
 import QuickActions from "@/components/QuickActions";
 import TransactionsPage from "./transactions/page";
+import ModernCardSlider from "@/components/src/app/components/ModernCardSlider";
+import Charts from "@/components/Charts";
 
 const maskAccount = (num = "") =>
-  num && num.length >= 4 ? "**** **** **** " + num.slice(-4) : "**** **** **** ****";
+  num && num.length >= 4 ? "**** " + num.slice(-4) : "****";
 
 
 export default function AccountsPage() {
@@ -35,50 +37,52 @@ export default function AccountsPage() {
       {/* Greeting message */}
       <div className="px-8 py-10">
         <h3 className="text-2xl font-extrabold text-right py-8 text-blue-900">
-        Welcome back, <span className="font-semibold">{username}</span>!
-      </h3>
+          Welcome back, <span className="font-semibold">{username}</span>!
+        </h3>
 
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        {Object.entries(accounts).map(([key, acc]) => (
-          <div
-            key={key}
-            className="rounded-2xl  border-l-10 border border-l-red-800 border-red-500 px-6 py-3 shadow-lg hover:border-l-red-950 hover:border-red-700 transition"
-          >
-            <h2 className="text-xl font-semibold capitalize mb-3">{key}</h2>
-            <div className="flex justify-between">
-              <div className="mb-4">
-                <p className="text-slate-500 text-sm">Account Number</p>
-                <p className="font-mono tracking-widest">
-                  {maskAccount(acc.accountNumber)}
-                </p>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          {Object.entries(accounts).map(([key, acc]) => (
+            <div
+              key={key}
+              className="rounded-2xl  border-l-10 border border-l-red-800 border-gray-500 px-5 py-2 shadow-lg hover:border-l-red-950 hover:border-red-700 transition"
+            >
+              <h2 className="text-xl font-semibold capitalize mb-3">{key}</h2>
+              <div className="flex justify-between">
+                <div className="mb-4">
+                  <p className="text-transparent text-sm text-left">Balance</p>
+                  <p className="text-slate-500 text-sm text-left">Account Number</p>
+                </div>
 
-              <div>
-                <p className="text-slate-500 text-sm">Balance</p>
-                <p className="text-2xl font-bold font-mono tracking-tighter">
-                  ${Number(acc.balance).toLocaleString()}
-                </p>
+                <div>
+                  <p className="text-xl font-bold font-mono tracking-tighter text-right">
+                    ${Number(acc.balance).toLocaleString()}
+                  </p>
+                  <p className="text-slate-500 text-sm font-mono tracking-widest text-right">
+                    {maskAccount(acc.accountNumber)}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+                <QuickActions />
+
       </div>
-      </div>
 
 
 
 
-       {/* MAIN COMPONENTS */}
-     <section className="bg-gradient-to-br from-red-200 to-blue-300 min-h-screen">
-       <QuickActions />
-      <TransactionsPage />
-      {/* <ModernCardSlider /> */}
-      {/* <Charts /> */}
-      {/* <Bills /> */}
-      {/* <BusinessTool /> */}
-      {/* <MessageWidget /> */}
-     </section>
+      {/* MAIN COMPONENTS */}
+      <section className="bg-gradient-to-br from-red-200 to-blue-300 min-h-screen">
+        <TransactionsPage />
+        <ModernCardSlider />
+        <Charts />
+        {/* <Bills /> */}
+        {/* <BusinessTool /> */}
+        {/* <MessageWidget /> */}
+      </section>
     </main>
   );
 }

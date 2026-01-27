@@ -6,7 +6,7 @@ export default function QuickActions() {
     const router = useRouter();
 
     return (
-        <div className="p-6 h-fit">
+        <div className="pt-10">
             {/* Action Buttons Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4  gap-3 ">
                 <button

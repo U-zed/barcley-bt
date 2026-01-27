@@ -32,7 +32,7 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-8 bg-white mt-20">
+    <div className="min-h-screen px-4 py-8 bg-gray-100 pt-8">
       <h2 className="text-2xl font-bold mb-4 text-blue-900 text-center">
         Transaction History
       </h2>
@@ -40,7 +40,7 @@ export default function TransactionsPage() {
         Review your recent payments and transfers. Only transactions made through supported banks are listed.
       </p>
 
-      <section className="flex flex-col  max-w-2xl mx-auto">
+      <section className="flex flex-col  max-w-2xl mx-auto bg-red-50">
         {transactions.length === 0 && (
           <p className="text-center text-gray-500">No transactions found.</p>
         )}
@@ -48,7 +48,7 @@ export default function TransactionsPage() {
         {transactions.slice(0, visibleCount).map((tx) => (
           <div
             key={tx.id}
-            className="bg-gray-50 border-t border-gray-200  p-1  hover:bg-gray-300 -md transition"
+            className="bg-gray-100 border-t border-gray-200  p-1  hover:bg-gray-300 -md transition"
           >
             <div className="flex justify-between p-1 ">
                  <p className="text-gray-900 font-semibold text-lg">{tx.recipientName || tx.senderName || "—"}</p>
@@ -76,7 +76,7 @@ export default function TransactionsPage() {
       {transactions.length > 10 && (
         <button
           onClick={toggleView}
-          className="fixed bottom-5 right-5 bg-blue-900 text-white text-sm px-3 py-2 rounded-full shadow-lg hover:bg-blue-950 transition"
+          className="sticky bottom-5 ml-auto  bg-blue-900 text-white text-sm px-3 py-2 rounded-full shadow-lg hover:bg-blue-950 transition"
         >
           {visibleCount === 10 ? "View More" : "View Less"}
         </button>
