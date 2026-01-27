@@ -37,29 +37,37 @@ export default function Page() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white to-blue-300">
       <motion.h1
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 90, damping: 12 }}
-          className="text-2xl md:text-4xl font-extrabold text-orange-500 text-center my-8"
-        >
-          Welcome to Barcley Bank & Trust (BB&T) Guest Access
-        </motion.h1>
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 90, damping: 12 }}
+        className="text-2xl md:text-4xl font-extrabold text-blue-900 text-center py-9"
+      >
+        Welcome to Barcley Bank & Trust (BB&T) Guest Access
+      </motion.h1>
 
-        <motion.p
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3, type: "spring", stiffness: 70 }}
-          className="p-2 text-md md:text-xl text-white text-center max-w-lg"
-        >
-          A secure and intuitive environment designed exclusively for authorized guests to explore essential account features and financial management experiences.
-        </motion.p>
+      <motion.p
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3, type: "spring", stiffness: 70 }}
+        className="p-4 text-lg md:text-xl text-black text-center max-w-lg"
+      >
+        A secure and intuitive environment designed exclusively for authorized guests to explore essential account features and financial management experiences.
+      </motion.p>
 
-     
-      <form onSubmit={handleLogin} className="bg-slate-900 p-8 rounded-xl w-96">
-        <h1 className="text-3xl font-bold mb-6 text-center"> Login </h1>
-        {error && <p className="mb-4 text-red-500 text-sm text-center">{error}</p>}
+
+      <form onSubmit={handleLogin} className="bg-slate-300 p-8 rounded-xl shadow w-96 my-4">
+
+        <div className="flex justify-center ">
+          <img
+            src="/logo.png"
+            alt="BBT Logo"
+            className="w-16 h-16"
+          />
+        </div>
+        <h1 className="text-blue-900 text-2xl font-bold my-6 text-center "> Enter Credentials </h1>
+        {error && <p className="mb-4 text-red-700 text-sm text-center">{error}</p>}
 
         <input
           placeholder="Username"
@@ -78,9 +86,8 @@ export default function Page() {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded flex items-center justify-center gap-2 ${
-            loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-          }`}
+          className={`w-full py-3 rounded flex items-center justify-center gap-2 ${loading ? "bg-blue-800 cursor-not-allowed" : "bg-blue-900 hover:bg-blue-950 text-white text-sm font-semibold"
+            }`}
         >
           {loading ? (
             <>

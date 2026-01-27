@@ -42,7 +42,7 @@ export default function AccountsPage() {
           Welcome back, <span className="font-semibold">{username}</span>!
         </h3>
 
-l
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {Object.entries(accounts).map(([key, acc]) => (
             <div
