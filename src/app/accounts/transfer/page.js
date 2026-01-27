@@ -124,7 +124,7 @@ export default function TransferPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-white p-8 mt-14">
+    <div className="min-h-screen bg-gray-100 text-white px-3 md:p-8 my-14">
 
 
       {/* Internal and external cards */}
@@ -195,12 +195,12 @@ export default function TransferPage() {
 
       {/* ================= EXTERNAL TRANSFER FLOW ================= */}
       {showExternal && (
-        <div className="max-w-xl mx-auto mt-8">
+        <div className="w-full md:max-w-xl mx-auto pt-14">
 
 
           {/* HEADER */}
           {!receipt && (
-            <div className="text-center mb-6">
+            <div className="text-center my-6">
               <h2 className="text-2xl font-bold text-blue-900 py-2">
                 External Bank Transfer
               </h2>
@@ -215,10 +215,10 @@ export default function TransferPage() {
           {!receipt && (
             <form
               onSubmit={handleSubmit}
-              className="max-w-lg space-y-4 bg-gray-900 p-6 rounded-xl border border-slate-800"
+              className="max-w-lg space-y-4 bg-gray-900 px-3 md:p-6 rounded-xl border border-slate-800"
             >
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-blue-900 py-2">
+                <h2 className="text-2xl font-bold text-white py-5">
                   Enter Recipient Details
                 </h2>
                 <p className="mt-2 text-xs md:text-sm text-orange-700 font-semibold max-w-md mx-auto bg-yellow-50/50 p-2 rounded border border-orange-700">
@@ -243,10 +243,10 @@ export default function TransferPage() {
               <input placeholder="Recipient Password" type="password" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientPassword(e.target.value)} />
               <input placeholder="Amount" type="number" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setAmount(e.target.value)} />
 
-              <p className="text-sm text-yellow-400 bg-gray-800 rounded p-2">
+              <p className="text-sm text-yellow-400 bg-gray-600 rounded p-2">
                 ⚠  By clicking Send, you confirm the above details are correct.
                 Transfers cannot be reversed once submitted.{" "}
-                <i className="text-red-600">
+                <i className="text-red-700">
                   Only credit cards, traditional banks and credit unions are supported.
                   Third-party apps such as Cash App, PayPal, Venmo, or Chime are not supported.
                 </i>
@@ -255,16 +255,16 @@ export default function TransferPage() {
 
 
               {/* BACK BUTTON */}
-              <div className="flex justify-between mt-9">
+              <div className="flex justify-between my-9">
                 {!receipt && (
                   <button
                     onClick={resetFlow}
-                    className=" bg-gray-300 hover:bg-gray-400 text-black text-sm font-semibold transition-all px-5 p-2 rounded cursor-pointer"
+                    className=" bg-gray-300 hover:bg-gray-400 text-black text-sm font-semibold transition-all px-9 p-3 rounded cursor-pointer"
                   >
                     Cancel
                   </button>
                 )}
-                <button className=" bg-blue-900 hover:bg-blue-950 text-sm font-semibold transition-all px-5 py-2 rounded cursor-pointer">
+                <button className=" bg-blue-900 hover:bg-blue-950 text-sm font-semibold transition-all px-5 py-3 rounded cursor-pointer">
                   Schedule Payment
                 </button>
               </div>
