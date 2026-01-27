@@ -39,21 +39,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Socials */}
-        <div>
-          <h4 className="font-bold mb-2">Follow Us</h4>
-          <div className="flex gap-4 mt-1">
-            <motion.a whileHover={{ scale: 1.2 }} href="#" className="text-white/70 hover:text-white">
-              🐦 Twitter
-            </motion.a>
-            <motion.a whileHover={{ scale: 1.2 }} href="#" className="text-white/70 hover:text-white">
-              📘 Facebook
-            </motion.a>
-            <motion.a whileHover={{ scale: 1.2 }} href="#" className="text-white/70 hover:text-white">
-              📸 Instagram
-            </motion.a>
-          </div>
-        </div>
       </div>
 
       <div className="bg-blue-800 text-white/60 text-center text-sm py-4">

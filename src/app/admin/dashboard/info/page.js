@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, orderBy, where } from "firebase/firestore";
 import { db } from "@/lib/firebaseClient";
+import AdminLayout from "../../AdminLayout";
 
 export default function AdminTransferInfoPage() {
   const [transfers, setTransfers] = useState([]);
@@ -27,6 +28,8 @@ export default function AdminTransferInfoPage() {
   }, []);
 
   return (
+    <AdminLayout>
+
     <div className="min-h-screen bg-slate-950 text-white p-8">
       <h1 className="text-3xl font-bold mb-6">User Transfers Info</h1>
 
@@ -69,5 +72,6 @@ export default function AdminTransferInfoPage() {
         </div>
       )}
     </div>
+    </AdminLayout>
   );
 }

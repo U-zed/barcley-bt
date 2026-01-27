@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebaseClient";
+import AdminLayout from "../../AdminLayout";
 
 export default function OtpAdminPage() {
   const [otps, setOtps] = useState([]);
@@ -16,6 +17,8 @@ export default function OtpAdminPage() {
   }, []);
 
   return (
+    <AdminLayout>
+
     <div className="min-h-screen bg-slate-950 text-white p-8">
       <h1 className="text-2xl font-semibold mb-6">OTP Monitor</h1>
 
@@ -29,5 +32,6 @@ export default function OtpAdminPage() {
         ))}
       </div>
     </div>
+    </AdminLayout>
   );
 }

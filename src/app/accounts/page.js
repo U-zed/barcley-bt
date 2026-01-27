@@ -37,12 +37,12 @@ export default function AccountsPage() {
   return (
     <main className="min-h-screen  mt-14 bg-white">
       {/* Greeting message */}
-      <div className="px-8 py-10">
+      <div className="px-3 md:px-8 py-10">
         <h3 className="text-2xl font-extrabold text-right py-8 text-blue-900">
           Welcome back, <span className="font-semibold">{username}</span>!
         </h3>
 
-
+l
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {Object.entries(accounts).map(([key, acc]) => (
             <div

@@ -12,6 +12,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebaseClient";
+import AdminLayout from "../../AdminLayout";
 
 export default function AddMoneyPage() {
   const [account, setAccount] = useState("");
@@ -89,6 +90,9 @@ export default function AddMoneyPage() {
 
 
   return (
+    
+    <AdminLayout>
+
     <div className="min-h-screen bg-slate-950 text-white p-8">
       <h1 className="text-2xl font-semibold mb-6">Add Money</h1>
 
@@ -145,5 +149,6 @@ export default function AddMoneyPage() {
         )}
       </form>
     </div>
+    </AdminLayout>
   );
 }
