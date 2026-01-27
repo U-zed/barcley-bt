@@ -61,11 +61,11 @@ export default function Charts() {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-4 ">
       {/* Header */}
       <div className="mb-6 text-center col-span-1 md:col-span-2">
-        <h1 className="text-3xl font-bold mb-2 text-blue-900">Account Overview</h1>
-        <p className="text-gray-600 text-lg">
+        <h1 className="text-2xl font-bold mb-2 text-red-700">Spending Summaries</h1>
+        <p className="text-gray-900 text-base">
           Monitor your monthly transactions and account distribution
         </p>
       </div>

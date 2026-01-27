@@ -129,7 +129,7 @@ export default function TransferPage() {
 
       {/* Internal and external cards */}
       {!showExternal && (
-        <div className="grid md:grid-cols-2 gap-6 ">
+        <div className="grid md:grid-cols-2 gap-6 pt-10">
 
           <h1 className="text-center text-3xl font-bold text-blue-900 mb-4">
             Secure Money Transfers
@@ -140,7 +140,7 @@ export default function TransferPage() {
           </p>
 
           {/* Internal */}
-          <div className="relative h-60 w-full max-w-sm sm:max-w-md md:max-w-lg flex flex-col justify-center items-center shadow-lg overflow-hidden rounded-[50%_20%_50%_30%_/30%_60%_20%_50%] m-auto"
+          <div className="relative h-60 w-full max-w-sm sm:max-w-md md:max-w-lg flex flex-col justify-center items-center shadow-lg overflow-hidden rounded-[50%_20%_50%_30%_/30%_60%_20%_50%] m-auto border border-orange-500"
             style={{
               backgroundImage: "url('/internal.jpg')",
               backgroundSize: "cover",
@@ -167,7 +167,7 @@ export default function TransferPage() {
 
           {/* External */}
           <div
-            className="relative h-64 flex flex-col justify-center items-center shadow-lg overflow-hidden rounded-[40%_60%_30%_70%_/50%_30%_60%_40%]"
+            className="relative h-64 flex flex-col justify-center items-center shadow-lg overflow-hidden rounded-[40%_60%_30%_70%_/50%_30%_60%_40%] border border-blue-900"
             style={{
               backgroundImage: "url('/external.jpg')",
               backgroundSize: "cover",
@@ -175,11 +175,11 @@ export default function TransferPage() {
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/90" />
-            <div className="relative z-10 text-center bg-gray-300 rounded-2xl px-1 border border-blue-900">
-              <h2 className="pt-1 text-lg font-bold text-blue-900">
+            <div className="relative z-10 text-center space-y-5">
+              <h2 className=" text-lg font-bold text-blue-900 bg-gray-100 w-fit mx-auto rounded px-2">
                 External Transfer
               </h2>
-              <p className="text-sm text-black my-4 max-w-xs mx-auto px-1">
+              <p className="text-sm text-black bg-gray-50 p-1 ">
                 Send money securely to external accounts with OTP confirmation for each transaction.
               </p>
               <button

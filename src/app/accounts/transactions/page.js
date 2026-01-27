@@ -32,11 +32,11 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-8 bg-gray-100 pt-8">
-      <h2 className="text-2xl font-bold mb-4 text-blue-900 text-center">
+    <div className="min-h-screen px-4 py-8 bg-white pt-8">
+      <h2 className="text-3xl font-bold mb-4 text-blue-900 text-center">
         Transaction History
       </h2>
-      <p className="text-sm text-gray-800 mb-6 text-center">
+      <p className="text-lg text-gray-800 mb-6 text-center">
         Review your recent payments and transfers. Only transactions made through supported banks are listed.
       </p>
 
@@ -48,7 +48,7 @@ export default function TransactionsPage() {
         {transactions.slice(0, visibleCount).map((tx) => (
           <div
             key={tx.id}
-            className="bg-gray-100 border-t border-gray-200  p-1  hover:bg-gray-300 -md transition"
+            className="bg-white border-t border-gray-200  p-1  hover:bg-gray-100 -md transition"
           >
             <div className="flex justify-between p-1 ">
                  <p className="text-gray-900 font-semibold text-lg">{tx.recipientName || tx.senderName || "—"}</p>

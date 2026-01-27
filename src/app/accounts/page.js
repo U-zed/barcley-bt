@@ -7,6 +7,8 @@ import QuickActions from "@/components/QuickActions";
 import TransactionsPage from "./transactions/page";
 import ModernCardSlider from "@/components/src/app/components/ModernCardSlider";
 import Charts from "@/components/Charts";
+import Bills from "./bills/page";
+import Business from "./business-tools/page";
 
 const maskAccount = (num = "") =>
   num && num.length >= 4 ? "**** " + num.slice(-4) : "****";
@@ -33,7 +35,7 @@ export default function AccountsPage() {
   }, []);
 
   return (
-    <main className="min-h-screen  mt-14 bg-gradient-to-br from-blue-100 to-red-50">
+    <main className="min-h-screen  mt-14 bg-white">
       {/* Greeting message */}
       <div className="px-8 py-10">
         <h3 className="text-2xl font-extrabold text-right py-8 text-blue-900">
@@ -67,22 +69,27 @@ export default function AccountsPage() {
           ))}
         </div>
 
-                <QuickActions />
-
+        <QuickActions />
       </div>
-
-
-
+        <TransactionsPage />
 
       {/* MAIN COMPONENTS */}
-      <section className="bg-gradient-to-br from-red-200 to-blue-300 min-h-screen">
-        <TransactionsPage />
+      <section className="bg-gradient-to-tr from-blue-400 to-orange-300 min-h-screen">
+
+        <div className="mb-6 text-center col-span-1 md:col-span-2">
+          <h1 className="text-2xl font-bold py-5 text-blue-900 text-center">Cards & Spending Summeries</h1>
+          <p className="ext-sm text-gray-800 mb-6 text-center">
+            Review your active bank cards, monitor transactions, track spending, and stay protected.
+          </p>
+        </div>
+
         <ModernCardSlider />
         <Charts />
-        {/* <Bills /> */}
-        {/* <BusinessTool /> */}
-        {/* <MessageWidget /> */}
       </section>
+
+        <Bills />
+        <Business />
+        {/* <MessageWidget /> */}
     </main>
   );
 }

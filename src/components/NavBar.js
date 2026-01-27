@@ -78,7 +78,7 @@ export default function NavBar() {
                 key={link.href}
                 href={link.href}
                 onClick={handleLinkClick}
-                className="py-3 px-6 hover:bg-blue-900 hover:text-white transition-all font-medium text-base border-b border-gray-200"
+                className="py-3 px-6 hover:bg-gray-50 hover:text-black text-slate-900 transition-all font-medium text-base border-b border-gray-200"
               >
                 {link.label}
               </Link>

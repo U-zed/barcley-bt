@@ -19,6 +19,7 @@ const BankCard = ({ accountType, accountNumber, ccv, gradient }) => (
     exit={{ opacity: 0, x: -50 }}
     transition={{ duration: 0.6, ease: "easeInOut" }}
   >
+    
     {/* Logo */}
     <div className="absolute top-4 right-4 w-16 h-16">
       <Image src="/logo.png" alt="Bank Logo" width={64} height={64} />
@@ -26,9 +27,9 @@ const BankCard = ({ accountType, accountNumber, ccv, gradient }) => (
 
     {/* Card Info */}
     <div className="flex flex-col justify-between h-full mt-4">
-      <p className="uppercase tracking-widest font-semibold text-sm my-4">{accountType}</p>
-      <p className="text-right text-xl tracking-widest my-2">{maskAccount(accountNumber)}</p>
-      <div className="flex justify-between mt-3 mb-8">
+      <p className="uppercase tracking-widest text-slate-900 font-bold text-lg my-4">{accountType}</p>
+      <p className="font-mono  text-right text-xl tracking-widest my-2">{maskAccount(accountNumber)}</p>
+      <div className="flex justify-between mt-3 mb-8 text-orange-800">
       <p className="text-sm">CCV: {maskCCV(ccv)}</p>
       <p className="text-sm">EXP: 09/30</p>
       </div>
@@ -88,7 +89,7 @@ export default function ModernCardSlider() {
   };
 
   return (
-    <div className=" bg-gradient-to-tr from-slate-600 to-orange-300  w-full overflow-hidden flex justify-center py-10">
+    <div className="  w-full overflow-hidden flex justify-center py-10">
       <motion.div
         className="flex gap-5 w-full max-w-[1200px] justify-center"
         animate={{ x: 0 }}
