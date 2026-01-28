@@ -71,9 +71,9 @@ export default function AccountsPage() {
   return (
     <main className="min-h-screen  mt-14 bg-white">
       {/* Greeting message */}
-      <div className="px-3 md:px-8 py-10">
+      <div className="px-3 md:px-8 ">
     {/* Greeting message */}
-<div className="px-3 md:px-8 py-10 flex flex-col md:flex-row items-center md:justify-end gap-4">
+<div className="px-3 md:px-8 pb-9 flex flex-col md:flex-row items-center md:justify-end gap-4">
   {user && (
     <>
       {/* Profile Photo or Initials */}

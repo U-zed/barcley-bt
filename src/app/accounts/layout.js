@@ -2,6 +2,7 @@
 
 import Footer from "@/components/Footer";
 import NavBar from "@/components/NavBar";
+import { Notification } from "@/components/Notification";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function AccountsLayout({ children }) {
@@ -10,6 +11,7 @@ export default function AccountsLayout({ children }) {
       <div className="flex-1 flex flex-col">
         <div >
           <NavBar />
+          <Notification/>
         </div>
         <AnimatePresence mode="wait">
           <motion.main
