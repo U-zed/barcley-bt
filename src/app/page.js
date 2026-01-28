@@ -42,7 +42,7 @@ export default function Page() {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 90, damping: 12 }}
-        className="text-2xl md:text-4xl font-extrabold text-blue-900 text-center py-9"
+        className="text-2xl md:text-4xl font-extrabold text-blue-900 text-center py-9 px-3"
       >
         Welcome to Barcley Bank & Trust (BB&T) Guest Access
       </motion.h1>
@@ -57,7 +57,7 @@ export default function Page() {
       </motion.p>
 
 
-      <form onSubmit={handleLogin} className="bg-slate-300 p-8 rounded-xl shadow w-96 my-4">
+      <form onSubmit={handleLogin} className="bg-slate-200 p-8 rounded-xl shadow w-96 my-4">
 
         <div className="flex justify-center ">
           <img
@@ -106,6 +106,11 @@ export default function Page() {
             "Login"
           )}
         </button>
+
+         <p className="mt-4 text-center text-sm text-green-800 hover:text-green-950 hover:underline font-semibold cursor-pointer"
+           onClick={() => router.push("/admin")}>
+          Log in to Core Account
+        </p>
       </form>
     </main>
   );

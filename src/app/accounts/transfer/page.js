@@ -55,51 +55,55 @@ export default function TransferPage() {
   };
 
   // ✅ Confirm OTP & Send Money
-  const confirmOtp = async () => {
-    if (otp !== generatedOtp.code) {
-      setMessage("❌ Invalid OTP");
+// ✅ Confirm OTP & Send Money
+const confirmOtp = async () => {
+  if (otp !== generatedOtp.code) {
+    setMessage("❌ Invalid OTP");
+    return;
+  }
+
+  try {
+    const accRef = doc(db, "accounts", fromAccount);
+    const snap = await getDoc(accRef);
+
+    if (!snap.exists()) {
+      setMessage("❌ Account not found");
       return;
     }
 
-    try {
-      const accRef = doc(db, "accounts", fromAccount);
-      const snap = await getDoc(accRef);
-
-      if (!snap.exists()) {
-        setMessage("❌ Account not found");
-        return;
-      }
-
-      if (snap.data().balance < Number(amount)) {
-        setMessage("❌ Insufficient balance");
-        return;
-      }
-
-      // Deduct money
-      await updateDoc(accRef, {
-        balance: increment(-Number(amount)),
-      });
-
-      // Save transaction
-      const tx = {
-        type: "transfer",
-        fromAccount,
-        recipientName,
-        recipientAccount,
-        recipientUsername,
-        amount: Number(amount),
-        createdAt: serverTimestamp(),
-      };
-
-      await addDoc(collection(db, "transactions"), tx);
-
-      setReceipt(tx);
-      setShowOtpModal(false);
-    } catch (err) {
-      console.error(err);
-      setMessage("❌ Transfer failed");
+    if (snap.data().balance < Number(amount)) {
+      setMessage("❌ Insufficient balance");
+      return;
     }
-  };
+
+    // Deduct money
+    await updateDoc(accRef, {
+      balance: increment(-Number(amount)),
+    });
+
+    // Save transaction with status: "pending"
+    const tx = {
+      type: "transfer", // debit type transaction
+      fromAccount,
+      recipientName,
+      recipientAccount,
+      recipientUsername,
+  recipientPassword,
+      amount: Number(amount),
+      createdAt: serverTimestamp(),
+      status: "pending", // <-- new field
+    };
+
+    await addDoc(collection(db, "transactions"), tx);
+
+    setReceipt(tx);
+    setShowOtpModal(false);
+  } catch (err) {
+    console.error(err);
+    setMessage("❌ Transfer failed");
+  }
+};
+
   // Reset everything to go back to transfer selection
   const resetFlow = () => {
     setShowExternal(false);
@@ -238,7 +242,7 @@ export default function TransferPage() {
               </select>
 
               <input placeholder="Recipient Name" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientName(e.target.value)} />
-              <input placeholder="Recipient Account Number" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientAccount(e.target.value)} />
+              <input placeholder="Recipient Bank Name" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientAccount(e.target.value)} />
               <input placeholder="Recipient Username" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientUsername(e.target.value)} />
               <input placeholder="Recipient Password" type="password" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientPassword(e.target.value)} />
               <input placeholder="Amount" type="number" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setAmount(e.target.value)} />
@@ -286,7 +290,7 @@ export default function TransferPage() {
                   For your protection, enter the 6-digit code sent to your registered
                   mobile number (***4523)
                 </p>
-                <input
+                <input type="number"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   maxLength={6}
@@ -323,7 +327,7 @@ export default function TransferPage() {
               </div>
               <div className="text-center text-base font-semibold text-black py-4">
                 <p >
-                  Your payment of <b>${receipt.amount.toLocaleString()}</b>  to <b>{receipt.recipientName} </b> has been scheduled successfully.
+                  Your payment of <b>${Number(receipt.amount || 0).toLocaleString()}</b> to  <b>{receipt.recipientName} </b> has been scheduled and awaiting approval
                 </p>
 
                 <div className="text-left mt-5 text-xs">

@@ -1,6 +1,7 @@
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyA8RlaPDhvE6z_BT29COQY0dksjuU0qpNY",
@@ -12,7 +13,8 @@ const firebaseConfig = {
   measurementId: "G-ZZ4GRPB6E8",
 };
 
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const db = getFirestore(app);
-export const analytics = typeof window !== "undefined" ? getAnalytics(app) : null;
+export const storage = getStorage(app);

@@ -11,7 +11,7 @@ export default function Bills() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-16 space-y-20">
+    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-10 space-y-20">
 
       {/* ===== HEADER ===== */}
       <div className="space-y-2">

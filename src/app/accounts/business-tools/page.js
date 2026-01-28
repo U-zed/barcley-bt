@@ -22,7 +22,7 @@ export default function Business() {
   const statements = ["January 2026", "December 2025", "November 2025"];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-16 space-y-20">
+    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-10space-y-20">
 
       {/* ===== PAGE HEADER ===== */}
       <div className="space-y-2">

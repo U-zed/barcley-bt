@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "@/components/Footer";
 import NavBar from "@/components/NavBar";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -17,13 +18,15 @@ export default function AccountsLayout({ children }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.35 }}
-            className="md:p-10"
+            className="md:p-10 pt-16 "
           >
-            
+
             {children}
           </motion.main>
         </AnimatePresence>
-
+        <div>
+          <Footer />
+        </div>
       </div>
     </div>
   );

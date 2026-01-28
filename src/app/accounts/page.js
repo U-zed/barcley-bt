@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebaseClient";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, doc, getDoc } from "firebase/firestore";
 import QuickActions from "@/components/QuickActions";
 import TransactionsPage from "./transactions/page";
 import ModernCardSlider from "@/components/src/app/components/ModernCardSlider";
@@ -13,11 +13,12 @@ import Business from "./business-tools/page";
 const maskAccount = (num = "") =>
   num && num.length >= 4 ? "**** " + num.slice(-4) : "****";
 
-
 export default function AccountsPage() {
   const [accounts, setAccounts] = useState({});
-  const [username, setUsername] = useState("");
+  const [user, setUser] = useState(null); // <- user state
+  const [loading, setLoading] = useState(true);
 
+  // Fetch accounts
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "accounts"), (snapshot) => {
       const data = {};
@@ -25,22 +26,76 @@ export default function AccountsPage() {
         data[doc.id] = doc.data();
       });
       setAccounts(data);
-
-      // Pick username from first account (or customize as needed)
-      const firstUser = snapshot.docs[0]?.data()?.username || "User";
-      setUsername(firstUser);
     });
-
     return () => unsub();
   }, []);
+
+  // Fetch main user
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const snap = await getDoc(doc(db, "users", "mainUser"));
+        if (snap.exists()) {
+          setUser(snap.data());
+        }
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // Greeting based on time
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  // Get initials if no photo
+  const getInitials = (name = "") => {
+    return name
+      ? name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+      : "U";
+  };
+
+  if (loading) return <p className="text-center mt-6">Loading…</p>;
 
   return (
     <main className="min-h-screen  mt-14 bg-white">
       {/* Greeting message */}
       <div className="px-3 md:px-8 py-10">
-        <h3 className="text-2xl font-extrabold text-right py-8 text-blue-900">
-          Welcome back, <span className="font-semibold">{username}</span>!
-        </h3>
+    {/* Greeting message */}
+<div className="px-3 md:px-8 py-10 flex flex-col md:flex-row items-center md:justify-end gap-4">
+  {user && (
+    <>
+      {/* Profile Photo or Initials */}
+      {user.photo ? (
+        <img
+          src={user.photo}
+          alt={user.fullName}
+          className="w-14 h-14 rounded-full object-cover border border-blue-900"
+        />
+      ) : (
+        <div className="w-14 h-14 rounded-full bg-gray-500 flex items-center justify-center text-lg md:text-xl font-bold text-white border border-blue-900">
+          {getInitials(user.fullName)}
+        </div>
+      )}
+
+      {/* Greeting Text */}
+      <h3 className="text-xl md:text-2xl font-extrabold text-blue-900 text-center md:text-right">
+        {getGreeting()}, <span className="font-semibold">{user.fullName}</span>!
+      </h3>
+    </>
+  )}
+</div>
 
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">

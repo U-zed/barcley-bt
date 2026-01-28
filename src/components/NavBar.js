@@ -15,7 +15,7 @@ export default function NavBar() {
     { href: "/accounts/bills", label: "Bill Pay" },
     { href: "/accounts/business-tools", label: "Business Tools" },
     { href: "/accounts/settings", label: "Settings" },
-    { href: "/admin/login", label: "Main Account" },
+    { href: "/admin", label: "Login Core Account" },
     { href: "/", label: "Logout" },
   ];
 

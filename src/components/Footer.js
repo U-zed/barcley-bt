@@ -12,7 +12,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-blue-900 text-white mt-10">
+    <footer className="bg-blue-900 text-white ">
       <div className="max-w-7xl mx-auto px-6 py-8 grid md:grid-cols-3 gap-6">
         {/* Contact */}
         <div>
