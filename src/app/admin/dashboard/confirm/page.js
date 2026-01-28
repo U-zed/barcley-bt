@@ -10,7 +10,6 @@ import {
   doc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebaseClient";
-import AdminLayout from "../../AdminLayout";
 
 export default function AdminConfirmPage() {
   const [transactions, setTransactions] = useState([]);
@@ -36,7 +35,7 @@ export default function AdminConfirmPage() {
 
   return (
     
-    <AdminLayout>
+  
 
     <div className="min-h-screen bg-slate-950 text-white p-8">
       <h1 className="text-3xl font-bold mb-6">
@@ -68,6 +67,6 @@ export default function AdminConfirmPage() {
         ))}
       </div>
     </div>
-    </AdminLayout>
+    
   );
 }
