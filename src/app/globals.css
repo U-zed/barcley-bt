@@ -20,6 +20,7 @@
 
 /* ---------- BASE ---------- */
 @layer base {
+  
   /* ---------- PAGE HEADINGS ---------- */
   h1 {
     @apply text-xl font-semibold leading-tight tracking-tight;
