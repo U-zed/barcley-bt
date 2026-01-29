@@ -1,11 +1,28 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 export default function LoadingAvatar({
   src = "/logo.png",
   size = 96,
+  delay = 9000, // delay in 9 s
+  onFinish,    // optional callback after delay
 }) {
+  const [show, setShow] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShow(false);
+      if (onFinish) onFinish();
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [delay, onFinish]);
+
+  if (!show) return null; // hide after delay
+
   return (
-    <div className="flex justify-center mt-6">
+    <div className="flex items-center justify-center min-h-screen">
       <div
         className="relative flex items-center justify-center"
         style={{ width: size, height: size }}
