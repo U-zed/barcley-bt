@@ -104,21 +104,19 @@ export default function AccountsPage() {
               key={key}
               className="rounded-2xl  border-l-10 border border-l-red-800 border-gray-500 px-5 py-2 shadow-lg hover:border-l-red-950 hover:border-red-700 transition"
             >
-              <h2 className="text-xl font-semibold capitalize mb-3">{key}</h2>
-              <div className="flex justify-between">
-                <div className="mb-4">
-                  <p className="text-transparent text-sm text-left">Balance</p>
-                  <p className="text-slate-500 text-sm text-left">Account Number</p>
-                </div>
+              <div className=" flex items-center gap-3 ">
 
-                <div>
+              <h2 className="text-xl font-semibold capitalize mb-3">{key}</h2>
+              <p className="text-slate-500 text-sm font-mono tracking-tight text-left">
+                    {maskAccount(acc.accountNumber)}
+                  </p>
+              </div>                
+                <div className="flex justify-between items-center">
+                    <p className="text-blue-950 text-base text-left">Available Balance</p>
                   <p className="text-xl font-bold font-mono tracking-tighter text-right">
                     ${Number(acc.balance).toLocaleString()}
                   </p>
-                  <p className="text-slate-500 text-sm font-mono tracking-widest text-right">
-                    {maskAccount(acc.accountNumber)}
-                  </p>
-                </div>
+                  
               </div>
             </div>
           ))}
