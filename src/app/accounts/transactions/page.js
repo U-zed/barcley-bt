@@ -8,6 +8,7 @@ import { ArrowUp, ArrowDown } from "lucide-react";
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
     const q = query(
@@ -37,6 +38,29 @@ export default function TransactionsPage() {
     if (status === "canceled") return "Failed";
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
+
+ useEffect(() => {
+    // update every minute so month flips automatically
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const current = now;
+  const previous = new Date(
+    current.getFullYear(),
+    current.getMonth() - 1,
+    1
+  );
+
+  const format = (date) =>
+    date.toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
+
 
   return (
     <div className="min-h-screen px-4 py-8 bg-white pt-8">
@@ -73,10 +97,13 @@ export default function TransactionsPage() {
     <div className="flex justify-between p-1">
 
 <div className="text-left">
-
-  <p className="text-gray-600 text-xs text-left">
+     <p className="text-gray-600 text-xs text-left">
+      {format(previous)} – {format(current)}
+    </p>
+  {/* <p className="text-gray-600 text-xs text-left">
         {tx.createdAt?.toDate().toLocaleString() || "—"}
-      </p>
+      </p> */}
+      
         {/* ✅ Only show status for debits */}
 {tx.type === "transfer" && (
   <p
