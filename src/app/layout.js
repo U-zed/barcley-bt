@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Barcley Bank & Trust",
-  description: "Barcley Bank & Trust – a personalized offshore business-only bank for sending money, managing beneficiaries, and tracking transactions",
+  description: "Barcley Bank & Trust – the private offshore bank for visionary business leaders, offering full financial control while granting trusted spouses or partners selective access",
 };
 
 export default function RootLayout({ children }) {
