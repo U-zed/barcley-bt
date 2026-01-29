@@ -35,10 +35,6 @@ const BankCard = ({ accountType, accountNumber, ccv, gradient }) => (
       </div>
     </div>
   </motion.div>
-
-
-
-
 );
 
 export default function ModernCardSlider() {

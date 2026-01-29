@@ -63,11 +63,11 @@ export default function TransactionsPage() {
 
 
   return (
-    <div className="min-h-screen px-4 py-8 bg-white pt-8">
-      <h2 className="text-3xl font-bold mb-4 text-blue-900 text-center">
+    <div className="min-h-screen px-4 py-8  pt-8">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 text-blue-950 text-center">
         Transaction History
       </h2>
-      <p className="text-lg text-gray-800 mb-6 text-center">
+      <p className="text-base md:text-lg text-gray-800 pb-10 text-center">
         Review your recent payments and transfers. Only transactions made through supported banks are listed.
       </p>
 

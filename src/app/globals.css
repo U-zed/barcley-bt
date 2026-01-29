@@ -19,6 +19,75 @@
 }
 
 /* ---------- BASE ---------- */
+@layer base {
+  /* ---------- PAGE HEADINGS ---------- */
+  h1 {
+    @apply text-xl font-semibold leading-tight tracking-tight;
+  }
+
+  @screen sm {
+    h1 {
+      @apply text-2xl;
+    }
+  }
+
+  @screen lg {
+    h1 {
+      @apply text-3xl;
+    }
+  }
+
+  /* ---------- SECTION HEADINGS ---------- */
+  h2 {
+    @apply text-lg font-medium leading-snug tracking-tight;
+  }
+
+  @screen sm {
+    h2 {
+      @apply text-xl;
+    }
+  }
+
+  /* ---------- SUB HEADINGS ---------- */
+  h3 {
+    @apply text-base font-medium leading-snug;
+  }
+
+  @screen sm {
+    h3 {
+      @apply text-lg;
+    }
+  }
+
+  h4 {
+    @apply text-sm font-medium;
+  }
+
+  /* ---------- BODY TEXT ---------- */
+  p {
+    @apply text-sm font-normal leading-relaxed;
+  }
+
+  @screen sm {
+    p {
+      @apply text-base;
+    }
+  }
+
+  /* ---------- MUTED / SECONDARY TEXT ---------- */
+  small,
+  .text-muted {
+    @apply text-xs font-normal text-[color:var(--muted)];
+  }
+
+  @screen sm {
+    small,
+    .text-muted {
+      @apply text-sm;
+    }
+  }
+}
+
 /* body {
   background-color: var(--background);
   color: var(--foreground);

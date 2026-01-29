@@ -22,22 +22,22 @@ export default function Business() {
   const statements = ["January 2026", "December 2025", "November 2025"];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-10space-y-20">
+    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-10 pb-3 space-y-20">
 
       {/* ===== PAGE HEADER ===== */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-blue-950 pt-10">
+        <h2 className="text-xl md:text-2xl text-center font-bold text-blue-950 pt-10">
           Business Tools
-        </h1>
-        <p className="text-gray-600 max-w-2xl">
+        </h2>
+        <p className="text-base md:text-lg text-center text-gray-600 max-w-2xl">
           Manage payroll, expenses, and financial documents for your business
           account.
         </p>
       </div>
 
       {/* ===== BUSINESS TOOLS ===== */}
-      <section className="space-y-6">
-        <h2 className="text-xl font-semibold text-blue-900">
+      <section className="space-y-6 my-1">
+        <h2 className="text-base md:text-lg font-semibold text-blue-900">
           Account Management
         </h2>
 
@@ -68,7 +68,7 @@ export default function Business() {
 
       {/* ===== DOCUMENTS & STATEMENTS ===== */}
       <section className="space-y-6">
-        <h2 className="text-xl font-semibold text-blue-900">
+        <h2 className="text-base md:text-lg pt-3 font-semibold text-blue-900">
           Statements & Documents
         </h2>
 
@@ -100,7 +100,7 @@ export default function Business() {
 
       {/* ===== REPORTS ===== */}
       <section className="space-y-6">
-        <h2 className="text-xl font-semibold text-blue-900">
+        <h2 className="text-base md:text-lg pt-3 font-semibold text-blue-900">
           Reports & Insights
         </h2>
 

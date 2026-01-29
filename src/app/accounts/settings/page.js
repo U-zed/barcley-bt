@@ -15,7 +15,7 @@ export default function SettingsPage() {
       {/* Security & Access */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Security & Access</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Security & Access</h2>
           <p className="text-sm text-gray-600">Protect your account</p>
         </div>
 
@@ -49,7 +49,7 @@ export default function SettingsPage() {
       {/* Profile & Account Settings */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900">
             Profile & Account Settings
           </h2>
           <p className="text-sm text-gray-600">
@@ -87,7 +87,7 @@ export default function SettingsPage() {
       {/* Notifications */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900">
             Notifications
           </h2>
           <p className="text-sm text-gray-600">
@@ -125,7 +125,7 @@ export default function SettingsPage() {
       {/* Linked Accounts */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900">
             Linked Accounts
           </h2>
           <p className="text-sm text-gray-600">
@@ -163,7 +163,7 @@ export default function SettingsPage() {
       {/* Statements & Documents */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900">
             Statements & Documents
           </h2>
           <p className="text-sm text-gray-600">

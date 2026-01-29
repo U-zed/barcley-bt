@@ -30,10 +30,10 @@ export default function ProfilePage() {
             />
           )}
           <div>
-            <h1 className="text-2xl font-semibold text-blue-900">
+            <h1 className="text-xl md:text-2xl font-semibold text-blue-950">
               Account Profile
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               View your account information
             </p>
           </div>
@@ -65,8 +65,8 @@ export default function ProfilePage() {
 /* ===== UI HELPERS ===== */
 function Section({ title, children }) {
   return (
-    <section className="bg-white rounded-xl border shadow-sm">
-      <div className="border-b px-6 py-4">
+    <section className="bg-blue-50 rounded border border-blue-100 shadow">
+      <div className="border-b border-blue-300 px-6 py-4">
         <h2 className="font-semibold text-gray-800">{title}</h2>
       </div>
       <div className="grid md:grid-cols-2 gap-6 px-6 py-5 text-sm">
@@ -79,7 +79,7 @@ function Section({ title, children }) {
 function Info({ label, value }) {
   return (
     <div>
-      <p className="text-gray-500 text-xs uppercase">{label}</p>
+      <p className="text-gray-600 text-xs uppercase">{label}</p>
       <p className="text-gray-900 font-medium mt-1">{value || "—"}</p>
     </div>
   );

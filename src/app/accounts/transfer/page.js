@@ -128,17 +128,17 @@ const confirmOtp = async () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-white px-3 md:p-8 my-14">
+    <div className="min-h-screen bg-gray-100 text-white px-3 md:p-8 py-10">
 
 
       {/* Internal and external cards */}
       {!showExternal && (
         <div className="grid md:grid-cols-2 gap-6 pt-10">
 
-          <h1 className="text-center text-3xl font-bold text-blue-900 mb-4">
+          <h2 className="text-center text-xl md:text-2xl font-bold text-blue-950 ">
             Secure Money Transfers
-          </h1>
-          <p className="text-center text-gray-600 text-lg max-w-2xl mx-auto mb-10">
+          </h2>
+          <p className="text-center text-gray-600 text-base md:text-lg max-w-2xl mx-auto pb-10">
             Effortlessly move funds between your accounts or send money externally
             with complete confidence.
           </p>
@@ -199,16 +199,15 @@ const confirmOtp = async () => {
 
       {/* ================= EXTERNAL TRANSFER FLOW ================= */}
       {showExternal && (
-        <div className="w-full md:max-w-xl mx-auto pt-14">
-
+        <div className="w-full md:max-w-xl mx-auto pt-10">
 
           {/* HEADER */}
           {!receipt && (
-            <div className="text-center my-6">
-              <h2 className="text-2xl font-bold text-blue-900 py-2">
+            <div className="text-center">
+              <h2 className="text-xl md:text-2xl font-bold text-blue-950 ">
                 External Bank Transfer
               </h2>
-              <p className="text-sm text-slate-500 my-5">
+              <p className="text-sm text-slate-700 pt-4 pb-7">
                 Schedule and manage outgoing payments securely to supported banks and credit unions.
                 All transfers require OTP verification before completion.
               </p>
@@ -219,10 +218,10 @@ const confirmOtp = async () => {
           {!receipt && (
             <form
               onSubmit={handleSubmit}
-              className="max-w-lg space-y-4 bg-gray-900 px-3 md:p-6 rounded-xl border border-slate-800"
+              className="max-w-lg space-y-4 bg-blue-50 px-3 md:p-6 rounded-xl border border-blue-300"
             >
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-white py-5">
+                <h2 className="text-base md:text-lg font-bold text-orange-500 py-5">
                   Enter Recipient Details
                 </h2>
                 <p className="mt-2 text-xs md:text-sm text-orange-700 font-semibold max-w-md mx-auto bg-yellow-50/50 p-2 rounded border border-orange-700">

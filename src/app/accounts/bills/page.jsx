@@ -15,15 +15,15 @@ export default function Bills() {
 
       {/* ===== HEADER ===== */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-blue-950">Bills & Payments</h1>
-        <p className="text-gray-600">
+        <h1 className="text-xl md:text-2xl font-bold text-blue-950 text-center">Bills & Payments</h1>
+        <p className="text-base md:text-lg text-center text-gray-600">
           View, manage, and pay your bills securely.
         </p>
       </div>
 
       {/* ===== UPCOMING BILLS ===== */}
-      <section className="space-y-6">
-        <h2 className="text-xl font-semibold text-blue-900">
+      <section className="space-y-5">
+        <h2 className="text-lg font-semibold text-gray-800">
           Upcoming Bills
         </h2>
 
@@ -60,7 +60,7 @@ export default function Bills() {
 
    {/* ===== SCHEDULED PAYMENTS ===== */}
 <section className="space-y-6">
-  <h2 className="text-xl font-semibold text-blue-900">
+  <h2 className="text-lg font-semibold text-gray-800">
     Scheduled Payments
   </h2>
 

@@ -64,8 +64,8 @@ export default function Charts() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-4 ">
       {/* Header */}
       <div className="mb-6 text-center col-span-1 md:col-span-2">
-        <h1 className="text-2xl font-bold mb-2 text-red-700">Spending Summaries</h1>
-        <p className="text-gray-900 text-base">
+        <h2 className="text-xl md:text-2xl font-bold mb-2 text-red-700 text-left">Spending Summaries</h2>
+        <p className="text-gray-900 text-base md:text-lg">
           Monitor your monthly transactions and account distribution
         </p>
       </div>
