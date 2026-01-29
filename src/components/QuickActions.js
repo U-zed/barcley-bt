@@ -56,7 +56,7 @@ export default function QuickActions() {
           className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white p-2 rounded-full font-semibold flex items-center justify-center gap-2"
         >
           <UsersIcon className="h-5 w-5 md:h-5 md:w-5" />
-          <span>View Beneficiaries</span>
+          <span> Beneficiaries</span>
         </button>
 
         {/* Love Vault */}
