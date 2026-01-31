@@ -26,7 +26,7 @@ export default function Page() {
 
       if (res.ok) {
         // ✅ Redirect to profile page with correct user
-        router.push(`/profile?u=${data.profileId}`);
+        router.push(`/accounts?u=${data.profileId}`);
       } else {
         setError(data.error || "Invalid credentials");
       }
@@ -57,7 +57,7 @@ export default function Page() {
         A secure and intuitive environment designed exclusively for authorized guests to explore essential account features and financial management experiences.
       </motion.p>
 
-      <form onSubmit={handleLogin} className="bg-slate-200 p-8 rounded-xl shadow w-96 my-4">
+      <form onSubmit={handleLogin} className="bg-slate-50 p-8 rounded-xl shadow w-96 my-4">
 
         <div className="flex justify-center">
           <img
