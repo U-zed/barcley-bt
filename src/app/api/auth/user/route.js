@@ -12,24 +12,28 @@ export async function POST(req) {
       );
     }
 
-    // Fetch all users credentials from Firestore
-    const snapshot = await dbAdmin.collection("loginCredentials").get();
-    const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // ✅ Query USERS collection (correct source)
+    const snapshot = await dbAdmin
+      .collection("users")
+      .where("username", "==", username)
+      .where("password", "==", password)
+      .limit(1)
+      .get();
 
-    // Find matching user
-    const user = users.find(u => u.userUsername === username && u.userPassword === password);
-
-    if (!user) {
+    if (snapshot.empty) {
       return NextResponse.json(
         { error: "Invalid username or password" },
         { status: 401 }
       );
     }
 
-    // Log successful login (audit trail)
+    const userDoc = snapshot.docs[0];
+    const userData = userDoc.data();
+
+    // ✅ Audit log (safe)
     try {
       await dbAdmin.collection("logins").add({
-        username: user.userUsername,
+        username: userData.username,
         role: "user",
         timestamp: new Date(),
       });
@@ -37,14 +41,18 @@ export async function POST(req) {
       console.error("Firestore logging error:", err);
     }
 
-    // Success response
+    // ✅ SUCCESS
     return NextResponse.json({
       success: true,
-      username: user.userUsername,
-      profileId: user.id,
+      username: userData.username,
+      profileId: userDoc.id, // 👉 "Chief12"
     });
+
   } catch (err) {
     console.error("Login API error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Server error" },
+      { status: 500 }
+    );
   }
 }

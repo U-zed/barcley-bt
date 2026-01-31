@@ -302,7 +302,7 @@ function ProfileView({ onBack }) {
     <div className="max-w-3xl mx-auto bg-white p-6 pt-10 rounded-2xl shadow space-y-3">
       <h2 className="text-2xl font-bold text-pink-700">Payment Profile</h2>
 
-      {loading && <p className="text-gray-500">Loading...</p>}
+      {loading && <p className="text-gray-500">Loadg...</p>}
 
       {!loading && users.length === 0 && payments.length === 0 && (
         <p className="text-gray-500">No user or payment data yet.</p>

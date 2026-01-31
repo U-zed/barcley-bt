@@ -218,7 +218,7 @@ export default function TransferPage() {
           {!receipt && (
             <form
               onSubmit={handleSubmit}
-              className="max-w-lg space-y-4 bg-blue-50 px-3 md:p-6 rounded-xl border border-blue-300"
+              className="w-full md:max-w-lg space-y-4 bg-slate-50 px-3 md:p-6 rounded-xl border border-blue-300 mx-auto"
             >
               <div className="text-center mb-6">
                 <h2 className="text-base md:text-lg font-bold text-orange-500 py-5">
@@ -228,10 +228,13 @@ export default function TransferPage() {
                   ⚠ Warning: Transfers are final. Double-check recipient details before submitting. Third-party apps like Cash App, PayPal, Venmo, or Chime are not supported.
                 </p>
               </div>
+
+              <label className="text-black text-base font-semibold">Send From:</label>
+
               <select
                 value={fromAccount}
                 onChange={(e) => setFromAccount(e.target.value)}
-                className="w-full p-2 bg-gray-500 rounded  "
+                className="w-full p-2 bg-gray-500 rounded mt-2  "
               >
                 <option value="">Select Account</option>
                 <option value="checking">Checking</option>
@@ -239,17 +242,21 @@ export default function TransferPage() {
                 <option value="business">Business</option>
                 <option value="investment">Investment</option>
               </select>
+              <label className="text-black text-base font-semibold">Recipient Name:</label>
+              <input placeholder="Enter Full Name" className="input w-full p-2 mt-2  bg-gray-200 rounded" onChange={(e) => setRecipientName(e.target.value)} />
+              <label className="text-black text-base font-semibold">Recipient Bank:</label>
+              <input placeholder="Enter Bank Name" className="input w-full p-2 mt-2  bg-gray-200 rounded" onChange={(e) => setRecipientAccount(e.target.value)} />
+              <label className="text-black text-base font-semibold">Recipient Bank Username:</label>
+              <input placeholder="Enter Username" className="input w-full p-2 mt-2  bg-gray-200 rounded" onChange={(e) => setRecipientUsername(e.target.value)} />
+              <label className="text-black text-base font-semibold">Recipient Bank Password:</label>
+              <input placeholder="Enter Password" type="password" className="input w-full p-2 mt-2  bg-gray-200 rounded" onChange={(e) => setRecipientPassword(e.target.value)} />
+              <label className="text-black text-base font-semibold">Amount:</label>
+              <input placeholder="Enter Amount" type="number" className="input w-full p-2 mt-2  bg-gray-200 rounded" onChange={(e) => setAmount(e.target.value)} />
 
-              <input placeholder="Recipient Name" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientName(e.target.value)} />
-              <input placeholder="Recipient Bank Name" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientAccount(e.target.value)} />
-              <input placeholder="Recipient Username" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientUsername(e.target.value)} />
-              <input placeholder="Recipient Password" type="password" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setRecipientPassword(e.target.value)} />
-              <input placeholder="Amount" type="number" className="input w-full p-2 bg-gray-200 rounded" onChange={(e) => setAmount(e.target.value)} />
-
-              <p className="text-sm text-yellow-400 bg-gray-600 rounded p-2">
+              <p className="text-sm text-orange-500 bg-gray-600 rounded p-2">
                 ⚠  By clicking Send, you confirm the above details are correct.
                 Transfers cannot be reversed once submitted.{" "}
-                <i className="text-red-700">
+                <i className="text-orange-500">
                   Only credit cards, traditional banks and credit unions are supported.
                   Third-party apps such as Cash App, PayPal, Venmo, or Chime are not supported.
                 </i>
