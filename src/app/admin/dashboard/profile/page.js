@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from "react";
 import {
+  collection,
   doc,
+  getDocs,
   onSnapshot,
   setDoc,
-  getDoc,
+  deleteDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebaseClient";
-import CredentialsTable from "../components/CredentialsTable";
 
 /* ===============================
    IMAGE COMPRESSION (≈ 2MB)
@@ -19,125 +20,92 @@ const compressImage = (file, maxWidth = 800, quality = 0.75) =>
   new Promise((resolve, reject) => {
     const img = new Image();
     const reader = new FileReader();
-
     reader.onload = (e) => (img.src = e.target.result);
     reader.onerror = reject;
-
     img.onload = () => {
       const scale = Math.min(1, maxWidth / img.width);
       const canvas = document.createElement("canvas");
       canvas.width = img.width * scale;
       canvas.height = img.height * scale;
-
       const ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
       canvas.toBlob(
         (blob) => resolve(blob),
         "image/jpeg",
         quality
       );
     };
-
     reader.readAsDataURL(file);
   });
 
-export default function AdminUserProfile() {
-  const userRef = doc(db, "users", "mainUser");
-  const credsRef = doc(db, "loginCredentials", "users");
+export default function AdminDashboardProfile() {
+  const usersCol = collection(db, "users");
+  const credsDoc = doc(db, "loginCredentials", "users");
 
-  const [user, setUser] = useState(null);
-  const [form, setForm] = useState({});
+  const [users, setUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [userForm, setUserForm] = useState({});
+  const [newUserForm, setNewUserForm] = useState({});
   const [creds, setCreds] = useState({});
-  const [activeTab, setActiveTab] = useState("view");
   const [uploading, setUploading] = useState(false);
-  const [savingCreds, setSavingCreds] = useState(false);
+  const [showSection, setShowSection] = useState("users"); // users | add | admin
+  const [showAdminCreds, setShowAdminCreds] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   /* ===============================
-     REALTIME USER PROFILE
+     LOAD USERS FROM FIRESTORE
   ================================ */
   useEffect(() => {
-    return onSnapshot(userRef, async (snap) => {
-      if (snap.exists()) {
-        setUser(snap.data());
-        setForm(snap.data());
-      } else {
-        const init = {
-          photo: "",
-          fullName: "",
-          email: "",
-          phone: "",
-          dob: "",
-          business: {
-            registration: "",
-            type: "",
-            country: "",
-          },
-          customerId: "",
-          status: "",
-          account: {
-            type: "",
-          },
-          since: "",
-          updatedBy: "system",
-          updatedAt: serverTimestamp(),
-        };
-        await setDoc(userRef, init);
-        setUser(init);
-        setForm(init);
-      }
+    const unsub = onSnapshot(usersCol, (snap) => {
+      setUsers(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
+    return unsub;
   }, []);
 
   /* ===============================
-     FETCH LOGIN CREDENTIALS
+     LOAD LOGIN CREDENTIALS
   ================================ */
   useEffect(() => {
     const loadCreds = async () => {
-      const snap = await getDoc(credsRef);
-      if (snap.exists()) {
-        setCreds(snap.data());
-      } else {
-        const init = {
-          userUsername: "",
-          userPassword: "",
-          adminUsername: "",
-          adminPassword: "",
-          updatedAt: serverTimestamp(),
-        };
-        await setDoc(credsRef, init);
-        setCreds(init);
-      }
+      const snap = await getDocs(collection(db, "loginCredentials"));
+      if (snap.docs.length) setCreds(snap.docs[0].data());
     };
     loadCreds();
   }, []);
 
   /* ===============================
-     FORM HANDLER
+     HANDLE USER SELECTION
   ================================ */
-  const handleChange = (path, value) => {
-    setForm((prev) => {
-      const updated = structuredClone(prev);
-      const keys = path.split(".");
-      let ref = updated;
-      keys.slice(0, -1).forEach((k) => (ref = ref[k] ||= {}));
-      ref[keys.at(-1)] = value;
-      return updated;
-    });
+  const selectUser = (id) => {
+    setSelectedUserId(id);
+    const user = users.find((u) => u.id === id);
+    setUserForm(user || {});
   };
 
   /* ===============================
-     PHOTO UPLOAD
+     HANDLE CHANGE
   ================================ */
-  const handlePhotoUpload = async (file) => {
+  const handleChange = (formType, field, value) => {
+    if (formType === "selected") setUserForm((p) => ({ ...p, [field]: value }));
+    if (formType === "new") setNewUserForm((p) => ({ ...p, [field]: value }));
+    if (formType === "creds") setCreds((p) => ({ ...p, [field]: value }));
+  };
+
+  /* ===============================
+     UPLOAD IMAGE
+  ================================ */
+  const handlePhotoUpload = async (formType, file) => {
     if (!file) return;
     try {
       setUploading(true);
       const compressed = await compressImage(file);
-      const imageRef = ref(storage, "profile/mainUser.jpg");
+      const imageRef = ref(
+        storage,
+        `profile/${formType === "selected" ? selectedUserId : newUserForm.username}.jpg`
+      );
       await uploadBytes(imageRef, compressed);
       const url = await getDownloadURL(imageRef);
-      handleChange("photo", url);
+      handleChange(formType, "photo", url);
     } catch (err) {
       alert("Image upload failed");
     } finally {
@@ -146,139 +114,136 @@ export default function AdminUserProfile() {
   };
 
   /* ===============================
-     SAVE PROFILE
+     SAVE SELECTED USER
   ================================ */
-  const handleSave = async () => {
-    await setDoc(
-      userRef,
-      {
-        ...form,
-        updatedBy: "admin",
-        updatedAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
-    alert("Profile updated");
+  const saveUser = async () => {
+    if (!selectedUserId) return alert("Select a user first");
+    await setDoc(doc(db, "users", selectedUserId), {
+      ...userForm,
+      updatedAt: serverTimestamp(),
+    }, { merge: true });
+    alert("User updated");
   };
 
   /* ===============================
-     SAVE CREDENTIALS
+     ADD NEW USER
   ================================ */
-  const saveCreds = async () => {
-    setSavingCreds(true);
-    await setDoc(
-      credsRef,
-      { ...creds, updatedAt: serverTimestamp() },
-      { merge: true }
-    );
-    setSavingCreds(false);
-    alert("Credentials updated");
+  const addUser = async () => {
+    if (!newUserForm.username) return alert("Enter a username for new user");
+    await setDoc(doc(db, "users", newUserForm.username), {
+      ...newUserForm,
+      createdAt: serverTimestamp(),
+    });
+    setNewUserForm({});
+    alert("User added");
   };
 
-  if (!user) return <p className="p-6">Loading…</p>;
+  /* ===============================
+     DELETE USER
+  ================================ */
+  const deleteUser = async () => {
+    if (!selectedUserId) return alert("Select a user first");
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    await deleteDoc(doc(db, "users", selectedUserId));
+    setSelectedUserId(null);
+    setUserForm({});
+    alert("User deleted");
+  };
+
+  /* ===============================
+     SAVE LOGIN CREDENTIALS
+  ================================ */
+  const saveCreds = async () => {
+    await setDoc(credsDoc, creds, { merge: true });
+    alert("Login credentials updated");
+  };
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="p-4 space-y-6">
 
-      {/* ===== TABS ===== */}
-      <div className="flex justify-center gap-3 text-xs">
-        {["view", "update", "logs"].map((t) => (
-          <button
-            key={t}
-            onClick={() => setActiveTab(t)}
-            className={`px-4 py-2 rounded font-semibold ${activeTab === t
-                ? "bg-slate-300 text-black "
-                : "bg-slate-900 text-white"
-              }`}
-          >
-            {t === "view"
-              ? "View Info"
-              : t === "update"
-                ? "Update Info"
-                : "Update Logs"}
-          </button>
-        ))}
+      {/* ===== TOP BUTTONS ===== */}
+      <div className="flex gap-2 items-center justify-center">
+        <button onClick={() => setShowSection("users")} className="text-base  font-semibold bg-blue-900 text-white px-4 py-2 rounded  hover:bg-gray-400 transition">Users</button>
+        <button onClick={() => setShowSection("add")} className="text-base  font-semibold bg-blue-900 text-white px-4 py-2 rounded  hover:bg-gray-400 transition">Add User</button>
+        <button onClick={() => setShowSection("admin")} className="text-base  font-semibold bg-blue-900 text-white px-4 py-2 rounded  hover:bg-gray-400 transition">Admin</button>
       </div>
 
-      {/* ===== VIEW ===== */}
-      {activeTab === "view" && (
-        <section className="bg-slate-900 rounded border  p-4 text-xs grid grid-cols-2 gap-4">
-          <PhotoView src={user.photo} />
-          <Info label="Full Name" value={user.fullName} />
-          <Info label="Email" value={user.email} />
-          <Info label="Phone" value={user.phone} />
-          <Info label="Date of Birth" value={user.dob} />
-          <Info label="Business Registration" value={user.business?.registration} />
-          <Info label="Business Type" value={user.business?.type} />
-          <Info label="Country" value={user.business?.country} />
-          <Info label="Customer ID" value={user.customerId} />
-          <Info label="Status" value={user.status} />
-          <Info label="Account Type" value={user.account?.type} />
-          <Info label="Member Since" value={user.since} />
-        </section>
-      )}
+      {/* ===== USERS SECTION ===== */}
+      {showSection === "users" && (
+        <div className="border rounded p-4 space-y-4">
 
-      {/* ===== UPDATE ===== */}
-      {activeTab === "update" && (
-        <section className="bg-slate-900  rounded-md p-6">
-          <div className="grid md:grid-cols-2 gap-4 text-xs">
-
-            <PhotoUpload
-              photo={form.photo}
-              uploading={uploading}
-              onUpload={handlePhotoUpload}
-            />
-
-            <Input label="Full Name" value={form.fullName} onChange={(v) => handleChange("fullName", v)} />
-            <Input label="Email" value={form.email} onChange={(v) => handleChange("email", v)} />
-            <Input label="Phone" value={form.phone} onChange={(v) => handleChange("phone", v)} />
-            <Input label="Date of Birth" value={form.dob} onChange={(v) => handleChange("dob", v)} />
-            <Input label="Business Registration" value={form.business?.registration} onChange={(v) => handleChange("business.registration", v)} />
-            <Input label="Business Type" value={form.business?.type} onChange={(v) => handleChange("business.type", v)} />
-            <Input label="Country" value={form.business?.country} onChange={(v) => handleChange("business.country", v)} />
-            <Input label="Customer ID" value={form.customerId} onChange={(v) => handleChange("customerId", v)} />
-            <Input label="Account Status" value={form.status} onChange={(v) => handleChange("status", v)} />
-            <Input label="Account Type" value={form.account?.type} onChange={(v) => handleChange("account.type", v)} />
-            <Input label="Member Since" value={form.since} onChange={(v) => handleChange("since", v)} />
+          {/* USER DROPDOWN */}
+          <div className="relative">
+            <button className="bg-slate-950 mb-2 text-white w-full border p-2 flex items-center justify-between" onClick={() => setDropdownOpen(!dropdownOpen)}>
+              {selectedUserId ? users.find(u => u.id === selectedUserId)?.fullName : "Select a user"}
+            </button>
+            {dropdownOpen && (
+              <ul className="absolute w-full border bg-slate-950 text-white max-h-60 overflow-y-auto z-10">
+                {users.map(u => (
+                  <li key={u.id} className="flex items-center gap-2 p-2 bg-gray-300 text-black hover:bg-gray-100 cursor-pointer"
+                      onClick={() => { selectUser(u.id); setDropdownOpen(false); }}>
+                    {u.photo && <img src={u.photo} className="w-8 h-8 rounded-full" />}
+                    <span>{u.fullName || u.userUsername}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
-          <div className="w-1/2 mx-auto mt-6">      
-             <button
-            onClick={handleSave}
-            disabled={uploading}
-            className=" w-full bg-blue-900 hover:bg-blue-950 text-white px-6 py-2 rounded-lg disabled:opacity-50"
-          >
-            Save Changes
-          </button>
-          </div>
-        </section>
+          {/* USER FORM */}
+          {selectedUserId && (
+            <div className="grid md:grid-cols-2 gap-4 mt-4">
+              <Input label="Full Name" value={userForm.fullName} onChange={(v) => handleChange("selected", "fullName", v)} />
+              <Input label="Email" value={userForm.email} onChange={(v) => handleChange("selected", "email", v)} />
+              <Input label="Phone" value={userForm.phone} onChange={(v) => handleChange("selected", "phone", v)} />
+              <Input label="Date of Birth" value={userForm.dob} onChange={(v) => handleChange("selected", "dob", v)} />
+              <Input label="Business Type" value={userForm.businessType} onChange={(v) => handleChange("selected", "businessType", v)} />
+              <Input label="Address" value={userForm.address} onChange={(v) => handleChange("selected", "address", v)} />
+              <Input label="Username" value={userForm.userUsername} onChange={(v) => handleChange("selected", "userUsername", v)} />
+              <Input label="Password" value={userForm.userPassword} onChange={(v) => handleChange("selected", "userPassword", v)} />
+              <PhotoUpload photo={userForm.photo} uploading={uploading} onUpload={(file) => handlePhotoUpload("selected", file)} />
+              <div className="flex gap-2 col-span-2 mt-4 justify-between">
+                <button onClick={saveUser} className="bg-blue-900 hover:bg-blue-950 transition text-white px-4 py-2 rounded">Update</button>
+                <button onClick={deleteUser} className="bg-red-900 hover:bg-red-950 transition text-white px-4 py-2 rounded">Delete</button>
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
-      {/* ===== UPDATE LOGS ===== */}
-      {activeTab === "logs" && (
-        <section className="flex flex-col md:flex-row gap-4 p-2 max-w-md mx-auto ">
-          
-        <div className="bg-slate-900  rounded-xl space-y-3 p-5">
-          <p className="text-gray-400 text-center p-1 text-base font-semibold">Update Guest Access Login</p>
-          <Input label="User Username" value={creds.userUsername} onChange={(v) => setCreds({ ...creds, userUsername: v })} />
-          <Input label="User Password" value={creds.userPassword} onChange={(v) => setCreds({ ...creds, userPassword: v })} />
-          <p className="text-gray-400 text-center p-1 text-base font-semibold">Update Core Account Login</p>
-          <Input label="Admin Username" value={creds.adminUsername} onChange={(v) => setCreds({ ...creds, adminUsername: v })} />
-          <Input label="Admin Password" value={creds.adminPassword} onChange={(v) => setCreds({ ...creds, adminPassword: v })} />
+      {/* ===== ADD NEW USER ===== */}
+      {showSection === "add" && (
+        <div className="border rounded p-4 space-y-4">
+          <h3 className="font-bold">Add New User</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Input label="Full Name" value={newUserForm.fullName} onChange={(v) => handleChange("new", "fullName", v)} />
+            <Input label="Email" value={newUserForm.email} onChange={(v) => handleChange("new", "email", v)} />
+            <Input label="Phone" value={newUserForm.phone} onChange={(v) => handleChange("new", "phone", v)} />
+            <Input label="Date of Birth" value={newUserForm.dob} onChange={(v) => handleChange("new", "dob", v)} />
+            <Input label="Business Type" value={newUserForm.businessType} onChange={(v) => handleChange("new", "businessType", v)} />
+            <Input label="Address" value={newUserForm.address} onChange={(v) => handleChange("new", "address", v)} />
+            <Input label="Username" value={newUserForm.username} onChange={(v) => handleChange("new", "username", v)} />
+            <Input label="Password" value={newUserForm.password} onChange={(v) => handleChange("new", "password", v)} />
+            <PhotoUpload photo={newUserForm.photo} uploading={uploading} onUpload={(file) => handlePhotoUpload("new", file)} />
+          </div>
+          <button onClick={addUser} className="bg-green-900 text-white px-4 py-2 rounded mt-4">Add User</button>
+        </div>
+      )}
 
-          <button
-            onClick={saveCreds}
-            disabled={savingCreds}
-            className="w-full mt-4 bg-blue-900 text-white py-2 rounded"
-          >
-            {savingCreds ? "Saving…" : "Save Credentials"}
+      {/* ===== ADMIN CREDENTIALS ===== */}
+      {showSection === "admin" && (
+        <div className="border rounded p-4 space-y-4">
+          <button onClick={() => setShowAdminCreds(!showAdminCreds)} className="bg-gray-900 text-white px-4 py-2 rounded border">
+            {showAdminCreds ? "Hide Admin Credentials" : "Show Admin Credentials"}
           </button>
+          {showAdminCreds && (
+            <div className="grid md:grid-cols-2 gap-4 mt-4">
+              <Input label="Admin Username" value={creds.adminUsername} onChange={(v) => handleChange("creds", "adminUsername", v)} />
+              <Input label="Admin Password" value={creds.adminPassword} onChange={(v) => handleChange("creds", "adminPassword", v)} />
+              <button onClick={saveCreds} className="bg-blue-900 text-white px-4 py-2 rounded col-span-2">Save Credentials</button>
+            </div>
+          )}
         </div>
-
-        <div className="bg-slate-900 border  rounded-xl w-full p-4 mx-auto space-y-3">
-          <CredentialsTable/>
-        </div>
-        </section>
       )}
     </div>
   );
@@ -287,37 +252,15 @@ export default function AdminUserProfile() {
 /* ===============================
    REUSABLE COMPONENTS
 ================================ */
-function Info({ label, value }) {
-  return (
-    <div>
-      <p className="text-gray-400 uppercase text-xs">{label}</p>
-      <p className="font-medium text-gray-200 py-2">{value || "—"}</p>
-    </div>
-  );
-}
-
 function Input({ label, value, onChange }) {
   return (
     <div>
-      <p className="text-xs text-gray-100 mb-2">{label}</p>
+      <p className="text-xs text-gray-300 mb-2">{label}</p>
       <input
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full p-2 border rounded text-sm bg-gray-200 text-black"
+        className="w-full p-2 border rounded text-sm"
       />
-    </div>
-  );
-}
-
-function PhotoView({ src }) {
-  return (
-    <div>
-      <p className="text-gray-100  text-xs">Profile Photo</p>
-      {src ? (
-        <img src={src} className="w-16 h-16 rounded-full border mt-2" />
-      ) : (
-        <p className="text-gray-100">—</p>
-      )}
     </div>
   );
 }
@@ -325,12 +268,10 @@ function PhotoView({ src }) {
 function PhotoUpload({ photo, uploading, onUpload }) {
   return (
     <div>
-      <p className="text-xs text-gray-100 mb-2">Profile Photo</p>
-      {photo && (
-        <img src={photo} className="w-16 h-16 rounded-full border mb-2" />
-      )}
-      <input type="file" accept="image/*" onChange={(e) => onUpload(e.target.files[0])} />
-      {uploading && <p className="text-xs text-gray-100 mt-2">Uploading…</p>}
+      <p className="text-xs text-gray-300 mb-2">Profile Photo</p>
+      {photo && <img src={photo} className="w-24 h-24 rounded-full border mb-2 " />}
+      <input type="file" accept="image/*" onChange={(e) => onUpload(e.target.files[0])} className="w-full p-2"/>
+      {uploading && <p className="text-xs text-gray-200 mt-1">Uploading…</p>}
     </div>
   );
 }

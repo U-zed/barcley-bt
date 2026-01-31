@@ -4,15 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
-
-
 export default function Page() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,8 +24,12 @@ export default function Page() {
       });
       const data = await res.json();
 
-      if (res.ok) router.push("/accounts");
-      else setError(data.error || "Invalid credentials");
+      if (res.ok) {
+        // ✅ Redirect to profile page with correct user
+        router.push(`/profile?u=${data.profileId}`);
+      } else {
+        setError(data.error || "Invalid credentials");
+      }
     } catch {
       setError("Server error, try again");
     } finally {
@@ -56,17 +57,17 @@ export default function Page() {
         A secure and intuitive environment designed exclusively for authorized guests to explore essential account features and financial management experiences.
       </motion.p>
 
-
       <form onSubmit={handleLogin} className="bg-slate-200 p-8 rounded-xl shadow w-96 my-4">
 
-        <div className="flex justify-center ">
+        <div className="flex justify-center">
           <img
             src="/logo.png"
             alt="BBT Logo"
             className="w-16 h-16"
           />
         </div>
-        <h1 className="text-blue-900 text-2xl font-bold my-6 text-center "> Enter Credentials </h1>
+        <h1 className="text-blue-900 text-2xl font-bold my-6 text-center">Enter Credentials</h1>
+
         {error && <p className="mb-4 text-red-700 text-sm text-center">{error}</p>}
 
         <input
@@ -86,8 +87,11 @@ export default function Page() {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded flex items-center justify-center gap-2 ${loading ? "bg-blue-800 cursor-not-allowed" : "bg-blue-900 hover:bg-blue-950 text-white text-sm font-semibold"
-            }`}
+          className={`w-full py-3 rounded flex items-center justify-center gap-2 ${
+            loading
+              ? "bg-blue-800 cursor-not-allowed"
+              : "bg-blue-900 hover:bg-blue-950 text-white text-sm font-semibold"
+          }`}
         >
           {loading ? (
             <>
@@ -107,8 +111,10 @@ export default function Page() {
           )}
         </button>
 
-         <p className="mt-4 text-center text-sm text-green-800 hover:text-green-950 hover:underline font-semibold cursor-pointer"
-           onClick={() => router.push("/admin")}>
+        <p
+          className="mt-4 text-center text-sm text-green-800 hover:text-green-950 hover:underline font-semibold cursor-pointer"
+          onClick={() => router.push("/admin")}
+        >
           Log in to Core Account
         </p>
       </form>

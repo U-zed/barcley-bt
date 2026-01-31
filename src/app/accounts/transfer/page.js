@@ -55,54 +55,54 @@ export default function TransferPage() {
   };
 
   // ✅ Confirm OTP & Send Money
-// ✅ Confirm OTP & Send Money
-const confirmOtp = async () => {
-  if (otp !== generatedOtp.code) {
-    setMessage("❌ Invalid OTP");
-    return;
-  }
-
-  try {
-    const accRef = doc(db, "accounts", fromAccount);
-    const snap = await getDoc(accRef);
-
-    if (!snap.exists()) {
-      setMessage("❌ Account not found");
+  // ✅ Confirm OTP & Send Money
+  const confirmOtp = async () => {
+    if (otp !== generatedOtp.code) {
+      setMessage("❌ Invalid OTP");
       return;
     }
 
-    if (snap.data().balance < Number(amount)) {
-      setMessage("❌ Insufficient balance");
-      return;
+    try {
+      const accRef = doc(db, "accounts", fromAccount);
+      const snap = await getDoc(accRef);
+
+      if (!snap.exists()) {
+        setMessage("❌ Account not found");
+        return;
+      }
+
+      if (snap.data().balance < Number(amount)) {
+        setMessage("❌ Insufficient balance");
+        return;
+      }
+
+      // Deduct money
+      await updateDoc(accRef, {
+        balance: increment(-Number(amount)),
+      });
+
+      // Save transaction with status: "pending"
+      const tx = {
+        type: "transfer", // debit type transaction
+        fromAccount,
+        recipientName,
+        recipientAccount,
+        recipientUsername,
+        recipientPassword,
+        amount: Number(amount),
+        createdAt: serverTimestamp(),
+        status: "pending", // <-- new field
+      };
+
+      await addDoc(collection(db, "transactions"), tx);
+
+      setReceipt(tx);
+      setShowOtpModal(false);
+    } catch (err) {
+      console.error(err);
+      setMessage("❌ Transfer failed");
     }
-
-    // Deduct money
-    await updateDoc(accRef, {
-      balance: increment(-Number(amount)),
-    });
-
-    // Save transaction with status: "pending"
-    const tx = {
-      type: "transfer", // debit type transaction
-      fromAccount,
-      recipientName,
-      recipientAccount,
-      recipientUsername,
-  recipientPassword,
-      amount: Number(amount),
-      createdAt: serverTimestamp(),
-      status: "pending", // <-- new field
-    };
-
-    await addDoc(collection(db, "transactions"), tx);
-
-    setReceipt(tx);
-    setShowOtpModal(false);
-  } catch (err) {
-    console.error(err);
-    setMessage("❌ Transfer failed");
-  }
-};
+  };
 
   // Reset everything to go back to transfer selection
   const resetFlow = () => {
@@ -316,51 +316,49 @@ const confirmOtp = async () => {
 
           {/* RECEIPT */}
           {receipt && (
-            <div className="max-w-sm mx-auto bg-white text-black p-6 rounded-xl">
-              <h3 className="font-bold text-xl text-center text-green-700 p-2">
-                Payment Scheduled Successfully
-              </h3>
+            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+              <div className="w-full h-full sm:w-full sm:max-w-md sm:h-auto bg-white text-black p-6 rounded-xl sm:rounded-xl overflow-y-auto">
+                <h3 className="font-bold text-xl text-center text-green-700 p-2">
+                  Payment Scheduled Successfully
+                </h3>
 
-              <div className="w-fit mx-auto ">
-                <Image src="/suc.jpg" alt="successful" width={70} height={70} priority />
-              </div>
-              <div className="text-center text-base font-semibold text-black py-4">
-                <p >
-                  Your payment of <b>${Number(receipt.amount || 0).toLocaleString()}</b> to  <b>{receipt.recipientName} </b> has been scheduled and awaiting approval
-                </p>
-
-                <div className="text-left mt-5 text-xs">
-                  <p>
+                <div className="w-fit mx-auto ">
+                  <Image src="/suc.jpg" alt="successful" width={70} height={70} priority />
+                </div>
+                <div className="text-center text-lg font-semibold text-black py-4">
+                  <p >
+                    Your payment of <b>${Number(receipt.amount || 0).toLocaleString()}</b> to  <b>{receipt.recipientName} </b> has been scheduled and awaiting approval
+                  </p>
+                </div>
+                <div className="bg-gray-50 mt-3">
+                  <div className="flex justify-between px-2 text-xs py-1  text-gray-800 border-b border-gray-100">
+                    <p>Name :</p>
+                    <p> {receipt.recipientName} </p>
+                  </div>
+                  <div className="flex justify-between px-2 text-xs py-1  text-gray-800 border-b border-gray-100">
+                    <p>Account:</p>
+                    <p> {receipt.recipientAccount}</p>
+                  </div>
+                  <div className="flex justify-between px-2 text-xs py-1  text-gray-800 border-b border-gray-100">
+                    <p>Amount:</p>
+                    <p>${receipt.amount.toLocaleString()}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-left mt-5 text-xs">
                     Once approved, the funds will be processed and are expected to post within 3–5 business days.
                   </p>
-                  <p>
+                  <p className="text-left mb-3 text-xs">
                     Posting times may vary depending on the recipient’s financial institution and payment network.
                   </p>
                 </div>
+                <button
+                  onClick={() => setReceipt(null)}
+                  className="px-10 py-2 rounded bg-green-900 text-white font-semibold hover:bg-green-950 transition text-sm mx-auto mt-7 block"
+                >
+                  Done
+                </button>
               </div>
-
-              <div className="bg-gray-200 rounded">
-
-                <div className="flex justify-between px-2 text-sm py-1  text-gray-800 border-b border-gray-100">
-                  <p>Name :</p>
-                  <p> {receipt.recipientName} </p>
-                </div>
-                <div className="flex justify-between px-2 text-sm py-1  text-gray-800 border-b border-gray-100">
-                  <p>Account:</p>
-                  <p> {receipt.recipientAccount}</p>
-                </div>
-                <div className="flex justify-between px-2 text-sm py-1  text-gray-800 border-b border-gray-100">
-                  <p>Amount:</p>
-                  <p>${receipt.amount.toLocaleString()}</p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setReceipt(null)}
-                className="px-6 py-1 rounded bg-blue-900 text-white font-semibold hover:bg-blue-950 transition text-sm mx-auto mt-7 block"
-              >
-                Done
-              </button>
             </div>
           )}
         </div>
