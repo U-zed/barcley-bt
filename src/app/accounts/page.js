@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { db } from "@/lib/firebaseClient";
-import { collection, doc, onSnapshot } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import {  db } from "@/lib/firebaseClient";
 import QuickActions from "@/components/QuickActions";
 import TransactionsPage from "./transactions/page";
 import ModernCardSlider from "@/components/src/app/components/ModernCardSlider";
@@ -10,16 +9,18 @@ import Charts from "@/components/Charts";
 import Bills from "./bills/page";
 import Business from "./business-tools/page";
 import LoadingAvatar from "@/components/src/LoadingAvatar";
+import Page from "../page";
+import { collection, onSnapshot } from "firebase/firestore";
 
 const maskAccount = (num = "") =>
   num && num.length >= 4 ? "**** " + num.slice(-4) : "****";
 
-export default function AccountsPage({ profileId }) {
+export default function AccountsPage() {
   const [accounts, setAccounts] = useState({});
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Realtime fetch accounts
+  // Fetch accounts dynamically
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "accounts"), (snapshot) => {
       const data = {};
@@ -27,29 +28,11 @@ export default function AccountsPage({ profileId }) {
         data[doc.id] = doc.data();
       });
       setAccounts(data);
+      setLoading(false);
     });
-
     return () => unsub();
   }, []);
 
-  // Realtime fetch user by profileId
-  useEffect(() => {
-    if (!profileId) return;
-
-    const userRef = doc(db, "users", profileId);
-    const unsub = onSnapshot(userRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setUser(docSnap.data());
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
-
-    return () => unsub();
-  }, [profileId]);
-
-  // Greeting based on time
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
@@ -57,7 +40,6 @@ export default function AccountsPage({ profileId }) {
     return "Good evening";
   };
 
-  // Get initials if no photo
   const getInitials = (name = "") => {
     return name
       ? name
@@ -70,9 +52,11 @@ export default function AccountsPage({ profileId }) {
 
   if (loading) return <LoadingAvatar src="/logo.png" size={100} />;
 
+  // If not logged in, show login form
+  if (!user) return <Page onLogin={(u) => setUser(u)} />;
+
   return (
     <main className="min-h-screen pt-14 bg-gray-50">
-      {/* Greeting message */}
       <div className="px-3 md:px-8 pb-5">
         <div className="pb-9 flex flex-col md:flex-row items-center md:justify-end gap-4">
           {user && (
@@ -96,7 +80,6 @@ export default function AccountsPage({ profileId }) {
           )}
         </div>
 
-        {/* Accounts */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {Object.entries(accounts).map(([key, acc]) => (
             <div
@@ -125,12 +108,13 @@ export default function AccountsPage({ profileId }) {
       <TransactionsPage />
       <section className="bg-gradient-to-tr from-blue-400 to-orange-300 min-h-screen">
         <div className="mb-6 text-center col-span-1 md:col-span-2">
-          <h1 className="text-xl md:text-2xl font-bold py-5 text-blue-950 text-center">Cards & Spending Summaries</h1>
+          <h1 className="text-xl md:text-2xl font-bold py-5 text-blue-950 text-center">
+            Cards & Spending Summaries
+          </h1>
           <p className="text-base md:text-lg text-gray-800 mb-6 text-center">
             Review your active bank cards, monitor transactions, track spending, and stay protected.
           </p>
         </div>
-
         <ModernCardSlider />
         <Charts />
       </section>

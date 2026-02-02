@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 export default function LoadingAvatar({
   src = "/logo.png",
   size = 96,
-  delay = 15000, // delay in  s
+  delay = 5000, // delay in 5 s
   onFinish,    // optional callback after delay
 }) {
   const [show, setShow] = useState(true);
