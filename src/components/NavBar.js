@@ -37,7 +37,7 @@ export default function NavBar() {
       <div className="max-w-7xl mx-auto flex justify-between items-center p-4 md:p-6">
         {/* Logo */}
         <Link href="/accounts" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="BB&T Logo" width={45} height={45} priority />
+          <Image src="/logo.png" alt="BB&T Logo" width={50} height={50} priority />
         </Link>
 
         {/* Desktop links */}
@@ -56,7 +56,7 @@ export default function NavBar() {
         {/* Mobile menu button */}
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden font-semibold text-2xl focus:outline-none"
+          className="md:hidden font-semibold text-4xl focus:outline-none"
           aria-label="Toggle Menu"
         >
           {open ? "✕" : "☰"}

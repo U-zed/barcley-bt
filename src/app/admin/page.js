@@ -13,8 +13,8 @@ export default function AdminLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
+    setError("");
 
     try {
       const res = await fetch("/api/auth/admin", {
@@ -22,12 +22,18 @@ export default function AdminLogin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
+
       const data = await res.json();
 
-      if (res.ok) router.push("/admin/dashboard");
-      else setError(data.error || "Invalid credentials");
-    } catch {
-      setError("Server error, try again");
+      if (res.ok) {
+        localStorage.setItem("adminAuth", "true"); // 🔑 store auth flag
+        router.push("/admin/dashboard");
+      } else {
+        setError(data.error || "Invalid credentials");
+      }
+    } catch (err) {
+      console.error("Login failed:", err);
+      setError("Server error, please try again");
     } finally {
       setLoading(false);
     }
@@ -35,7 +41,6 @@ export default function AdminLogin() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white p-8">
-
       <motion.h1
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -51,82 +56,56 @@ export default function AdminLogin() {
       >
         You are leaving the Guest Account environment. To access full account features, secure transfers, and advanced financial tools, please log in to the core account. <i className="text-orange-500">Barcley Bank & Trust Guest Access</i> allows you to explore limited features
       </motion.h2>
-      
-      <form onSubmit={handleLogin} className="bg-gray-900 py-8 rounded-xl w-full md:w-1/2 space-y-3">
+
+      <form
+        onSubmit={handleLogin}
+        className="bg-gray-50 py-8 rounded-xl w-full md:w-1/2 space-y-4"
+      >
         <div className="flex justify-center bg-white w-fit mx-auto rounded-full p-1">
-          <img
-            src="/logo.png"
-            alt="BBT Logo"
-            className="w-13 h-13"
-          />
+          <img src="/logo.png" alt="BBT Logo" className="w-14 h-14" />
         </div>
-        <h1 className="text-red-600 text-lg font-bold text-center "> Enter Credentials </h1>
-        <p className="text-center text-sm text-gray-300 p-3">Logging in ensures full security,
-        access to personalized services, and complete account control. An OTP code will be sent to verify your identity.</p>
+
+        <h1 className="text-blue-900 text-lg font-bold text-center "> Enter Credentials </h1>
+        <p className="text-center text-sm text-gray-800 p-4">Logging in ensures full security,
+          access to personalized services, and complete account control. An OTP code will be sent to verify your identity.</p>
         {error && <p className="my-3 text-red-600 text-sm text-center">{error}</p>}
 
-<div className="px-9 space-y-3 w-full">
-  <div className="flex flex-col">
-    <label className="text-sm font-medium text-gray-400 mb-1">Email:</label>
-    <input
-      placeholder="Enter Email"
-      className="w-full p-3 rounded bg-gray-200 text-black border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-      value={username}
-      onChange={(e) => setUsername(e.target.value)}
-    />
-  </div>
+        <div className="px-9 space-y-4 w-full">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-800 mb-1">Email:</label>
+            <input
+              type="email"
+              placeholder="Enter Email"
+              className="w-full p-3 rounded bg-gray-100 text-black border border-gray-300 focus:ring focus:ring-blue-900 outline-none transition"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
 
-  <div className="flex flex-col">
-    <label className="text-sm font-medium text-gray-400 mb-1">Password:</label>
-    <input
-      type="password"
-      placeholder="Enter Password"
-      className="w-full p-3 rounded bg-gray-200 text-black border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-    />
-  </div>
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-800 mb-1">Password:</label>
+            <input
+              type="password"
+              placeholder="Enter Password"
+              className="w-full p-3 rounded bg-gray-100 text-black border border-gray-300 focus:ring focus:ring-blue-900 outline-none transition"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-  <button
-    type="submit"
-    disabled={loading}
-    className={`w-full py-3 mt-6 rounded flex items-center justify-center gap-2 text-white ${
-      loading
-        ? "bg-gray-400 text-black cursor-not-allowed"
-        : "bg-blue-800 hover:bg-blue-900"
-    } transition`}
-  >
-    {loading ? (
-      <>
-        <svg
-          className="animate-spin h-5 w-5 text-white"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          ></circle>
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v8H4z"
-          ></path>
-        </svg>
-        Logging in...
-      </>
-    ) : (
-      "Login"
-    )}
-  </button>
-</div>
-<p className="mt-4 text-center text-sm text-green-500 hover:text-green-800 hover:underline font-semibold cursor-pointer"
-           onClick={() => router.push("/")}>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 mt-6 rounded flex items-center justify-center gap-2 text-white ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-900 hover:bg-blue-950"
+              } transition`}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </div>
+        <p className="mt-4 text-center text-sm text-green-700 hover:text-red-800 hover:underline font-semibold cursor-pointer transition-all"
+          onClick={() => router.push("/")}>
           Log in to Guest Access
         </p>
       </form>

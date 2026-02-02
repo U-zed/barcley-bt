@@ -3,45 +3,27 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { db } from "@/lib/firebaseClient";
-import { doc, getDoc } from "firebase/firestore";
 
 export default function AdminDashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false);
 
-  const pathname = usePathname();
   const router = useRouter();
+  const pathname = usePathname();
   const sidebarRef = useRef(null);
 
-  // Fetch admin user data
+  // ✅ Auth check
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const snap = await getDoc(doc(db, "users", "mainUser"));
-        if (snap.exists()) {
-          const data = snap.data();
-          setUser(data);
-          setLoading(false);
+    const auth = localStorage.getItem("adminAuth");
 
-          if (data?.role !== "admin") {
-            router.push("/admin");
-          }
-        } else {
-          setLoading(false);
-          router.push("/admin");
-        }
-      } catch (err) {
-        console.error(err);
-        setLoading(false);
-        router.push("/admin");
-      }
-    };
-    fetchUser();
+    if (!auth) {
+      router.replace("/admin"); // redirect to login if not authenticated
+    } else {
+      setReady(true);
+    }
   }, [router]);
 
-  // Close sidebar on click outside
+  // ✅ Close sidebar on click outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (sidebarRef.current && !sidebarRef.current.contains(e.target) && sidebarOpen) {
@@ -52,11 +34,12 @@ export default function AdminDashboardLayout({ children }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [sidebarOpen]);
 
-  if (loading) return <p className="text-center mt-6 text-white">Loading…</p>;
-  if (!user) return null;
+  if (!ready) return null; // wait until auth is checked
 
+  // ✅ Sidebar menu items
   const menuItems = [
-    { name: "Codes", href: "/admin/dashboard" },
+    { name: "Home", href: "/admin/dashboard" },
+    { name: "Codes", href: "/admin/dashboard/otp" },
     { name: "Profile", href: "/admin/dashboard/profile" },
     { name: "Transactions", href: "/admin/dashboard/transactions" },
     { name: "Fund Accounts", href: "/admin/dashboard/add-money" },
@@ -66,8 +49,10 @@ export default function AdminDashboardLayout({ children }) {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
+      {/* Sidebar overlay for mobile */}
       {sidebarOpen && <div className="fixed inset-0 bg-black bg-opacity-30 z-30 md:hidden" />}
+
+      {/* Sidebar */}
       <aside
         ref={sidebarRef}
         className={`fixed top-0 left-0 z-40 h-full w-64 bg-slate-900 text-white transform transition-transform duration-300 ease-in-out
@@ -75,14 +60,10 @@ export default function AdminDashboardLayout({ children }) {
       >
         {/* Logo / User */}
         <div className="p-4 border-b border-gray-500 flex flex-col items-center">
-          {user?.photo ? (
-            <img src={user.photo} alt="Admin" className="w-16 h-16 rounded-full" />
-          ) : (
-            <div className="w-16 h-16 rounded-full bg-gray-500 flex items-center justify-center text-lg font-bold">
-              {user?.fullName?.[0] || "A"}
-            </div>
-          )}
-          <p className="mt-2 font-semibold">{user?.fullName}</p>
+          <div className="w-16 h-16 rounded-full bg-gray-500 flex items-center justify-center text-lg font-bold">
+            A
+          </div>
+          <p className="mt-2 font-semibold">Admin</p>
         </div>
 
         {/* Menu */}
@@ -103,10 +84,14 @@ export default function AdminDashboardLayout({ children }) {
           ))}
         </nav>
 
+        {/* Logout */}
         <div className="p-4 border-t border-gray-500">
           <button
             className="w-full bg-red-500 hover:bg-red-600 py-2 rounded text-sm font-semibold"
-            onClick={() => router.push("/admin")}
+            onClick={() => {
+              localStorage.removeItem("adminAuth");
+              router.push("/admin");
+            }}
           >
             Logout
           </button>
@@ -115,7 +100,7 @@ export default function AdminDashboardLayout({ children }) {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col">
-        {/* Fixed Top Navbar */}
+        {/* Top navbar for mobile */}
         <header className="fixed top-0 left-0 right-0 z-20 bg-gradient-to-br from-white to-blue-300 text-blue-900 shadow px-4 py-2 flex items-center justify-between md:hidden">
           <button
             className="p-2 rounded bg-blue-900 text-white"
@@ -127,7 +112,12 @@ export default function AdminDashboardLayout({ children }) {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
 
@@ -136,7 +126,7 @@ export default function AdminDashboardLayout({ children }) {
           </div>
         </header>
 
-        {/* Main content with padding for sidebar on desktop */}
+        {/* Page content */}
         <main className="flex-1 pt-16 md:pt-0 md:ml-64 bg-slate-950 min-h-screen transition-all">
           {children}
         </main>
