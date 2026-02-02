@@ -11,33 +11,39 @@ export default function Page() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  try {
-    const res = await fetch("/api/auth/user", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
-    const data = await res.json();
+    try {
+      // Call your server-side API that checks the .env users
+      const res = await fetch("/api/auth/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (res.ok && data.user) {
-      // Save user in localStorage or state to show in AccountsPage
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Invalid credentials");
+        setLoading(false);
+        return;
+      }
+
+      // Save the logged-in user info to localStorage
       localStorage.setItem("currentUser", JSON.stringify(data.user));
-      router.push(`/accounts?u=${data.profileId}`);
-    } else {
-      setError(data.error || "Invalid credentials");
-    }
-  } catch {
-    setError("Server error, try again");
-  } finally {
-    setLoading(false);
-  }
-};
 
+      // Redirect to accounts page
+      router.push("/accounts");
+
+    } catch (err) {
+      setError("Server error, try again");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white to-blue-300">
@@ -60,28 +66,25 @@ const handleLogin = async (e) => {
       </motion.p>
 
       <form onSubmit={handleLogin} className="bg-slate-50 p-8 rounded-xl shadow w-96 my-4">
-
         <div className="flex justify-center">
-          <img
-            src="/logo.png"
-            alt="BBT Logo"
-            className="w-16 h-16"
-          />
+          <img src="/logo.png" alt="BBT Logo" className="w-16 h-16" />
         </div>
-        <h1 className="text-blue-900 text-2xl font-bold my-6 text-center">Enter Credentials</h1>
+        <h1 className="text-blue-900 text-2xl font-bold my-6 text-center">
+          Enter Credentials
+        </h1>
 
         {error && <p className="mb-4 text-red-700 text-sm text-center">{error}</p>}
 
         <input
           placeholder="Username"
-          className="w-full mb-4 p-3 rounded bg-slate-800"
+          className="w-full mb-4 p-3 rounded bg-slate-800 text-white"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
-          className="w-full mb-6 p-3 rounded bg-slate-800"
+          className="w-full mb-6 p-3 rounded bg-slate-800 text-white"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
