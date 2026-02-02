@@ -40,8 +40,9 @@ export default function AdminLogin() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white p-8">
-      <motion.h1
+    <main className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white py-8 px-1">
+  <div className="px-8">
+        <motion.h1
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 90, damping: 12 }}
@@ -56,6 +57,7 @@ export default function AdminLogin() {
       >
         You are leaving the Guest Account environment. To access full account features, secure transfers, and advanced financial tools, please log in to the core account. <i className="text-orange-500">Barcley Bank & Trust Guest Access</i> allows you to explore limited features
       </motion.h2>
+  </div>
 
       <form
         onSubmit={handleLogin}
