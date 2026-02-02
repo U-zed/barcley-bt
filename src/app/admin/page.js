@@ -40,7 +40,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white py-8 px-1">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white py-8 px-3">
   <div className="px-8">
         <motion.h1
         initial={{ y: -50, opacity: 0 }}
@@ -61,18 +61,18 @@ export default function AdminLogin() {
 
       <form
         onSubmit={handleLogin}
-        className="bg-gray-50 py-8 rounded-xl w-full md:w-1/2 space-y-4"
+        className="bg-gray-50 py-8 rounded-xl w-full md:w-1/2 space-y-2"
       >
         <div className="flex justify-center bg-white w-fit mx-auto rounded-full p-1">
           <img src="/logo.png" alt="BBT Logo" className="w-14 h-14" />
         </div>
 
         <h1 className="text-blue-900 text-lg font-bold text-center "> Enter Credentials </h1>
-        <p className="text-center text-sm text-gray-800 p-4">Logging in ensures full security,
+        <p className="text-center text-sm text-gray-800 px-4">Logging in ensures full security,
           access to personalized services, and complete account control. An OTP code will be sent to verify your identity.</p>
         {error && <p className="my-3 text-red-600 text-sm text-center">{error}</p>}
 
-        <div className="px-9 space-y-4 w-full">
+        <div className="px-9 space-y-3 w-full">
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-800 mb-1">Email:</label>
             <input
@@ -106,7 +106,7 @@ export default function AdminLogin() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </div>
-        <p className="mt-4 text-center text-sm text-green-700 hover:text-red-800 hover:underline font-semibold cursor-pointer transition-all"
+        <p className="mt-3 text-center text-sm text-green-700 hover:text-red-800 hover:underline font-semibold cursor-pointer transition-all"
           onClick={() => router.push("/")}>
           Log in to Guest Access
         </p>

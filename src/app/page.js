@@ -11,31 +11,33 @@ export default function Page() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      const res = await fetch("/api/auth/user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await res.json();
+  try {
+    const res = await fetch("/api/auth/user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await res.json();
 
-      if (res.ok) {
-        // ✅ Redirect to profile page with correct user
-        router.push(`/accounts?u=${data.profileId}`);
-      } else {
-        setError(data.error || "Invalid credentials");
-      }
-    } catch {
-      setError("Server error, try again");
-    } finally {
-      setLoading(false);
+    if (res.ok && data.user) {
+      // Save user in localStorage or state to show in AccountsPage
+      localStorage.setItem("currentUser", JSON.stringify(data.user));
+      router.push(`/accounts?u=${data.profileId}`);
+    } else {
+      setError(data.error || "Invalid credentials");
     }
-  };
+  } catch {
+    setError("Server error, try again");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white to-blue-300">

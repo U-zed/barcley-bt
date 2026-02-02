@@ -11,7 +11,8 @@ export default function NavBar() {
 
   const links = [
     { href: "/accounts", label: "Home" },
-    { href: "/accounts/profile", label: "Profile" },
+    { href: "/accounts/transfer", label: "Schedule Payment" },
+    { href: "/accounts/new-beneficiary", label: "Add Beneficiary" },
     { href: "/accounts/bills", label: "Bill Pay" },
     { href: "/accounts/business-tools", label: "Business Tools" },
     { href: "/accounts/settings", label: "Settings" },
