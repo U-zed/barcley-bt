@@ -19,17 +19,17 @@ export default function ProfilePage() {
       }
 
       const sessionData = snap.data();
-      const userDocId = sessionData?.userId; // make sure your login sets this
+      const username = sessionData?.username; // <-- use username as doc ID
 
-      if (!userDocId) {
+      if (!username) {
         setUser(null);
         setLoading(false);
         return;
       }
 
       try {
-        // Fetch user info by document ID
-        const userSnap = await getDoc(doc(db, "users", userDocId));
+        // Fetch full user info by username (doc ID)
+        const userSnap = await getDoc(doc(db, "users", username));
         if (userSnap.exists()) {
           setUser({ id: userSnap.id, ...userSnap.data() });
         } else {
