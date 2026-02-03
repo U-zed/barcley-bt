@@ -1,33 +1,39 @@
 import { NextResponse } from "next/server";
-import { dbAdmin } from "@/lib/firebaseAdmin";
-
-const USERS = [
-  { name: process.env.USER1_NAME, username: process.env.USER1_USERNAME, password: process.env.USER1_PASSWORD },
-  { name: process.env.USER2_NAME, username: process.env.USER2_USERNAME, password: process.env.USER2_PASSWORD },
-  { name: process.env.USER3_NAME, username: process.env.USER3_USERNAME, password: process.env.USER3_PASSWORD },
-  { name: process.env.USER4_NAME, username: process.env.USER4_USERNAME, password: process.env.USER4_PASSWORD },
-  { name: process.env.USER5_NAME, username: process.env.USER5_USERNAME, password: process.env.USER5_PASSWORD },
-];
+import { db } from "@/lib/firebaseClient"; // your firebase client
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export async function POST(req) {
-  const { username, password } = await req.json();
+  try {
+    const { username, password } = await req.json();
 
-  const user = USERS.find(
-    (u) => u.username === username && u.password === password
-  );
+    if (!username || !password) {
+      return NextResponse.json({ error: "Username and password required" }, { status: 400 });
+    }
 
-  if (!user) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-  }
+    // Get user doc by ID (username)
+    const userRef = doc(db, "users", username);
+    const userSnap = await getDoc(userRef);
 
-  await dbAdmin
-    .collection("sessions")
-    .doc("current")
-    .set({
+    if (!userSnap.exists()) {
+      return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
+    }
+
+    const user = userSnap.data();
+
+    if (user.password !== password) {
+      return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
+    }
+
+    // Set session doc
+    await setDoc(doc(db, "sessions", "current"), {
+      fullName: user.fullName,
       username: user.username,
-      fullName: user.name,
-      loggedInAt: new Date(),
+      loggedAt: new Date().toISOString(),
     });
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, fullName: user.fullName });
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  }
 }

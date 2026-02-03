@@ -144,7 +144,7 @@ export default function TransferPage() {
           </p>
 
           {/* Internal */}
-          <div className="relative h-60 w-full max-w-sm sm:max-w-md md:max-w-lg flex flex-col justify-center items-center shadow-lg overflow-hidden rounded-[50%_20%_50%_30%_/30%_60%_20%_50%] m-auto border border-orange-500"
+          <div className="relative h-60 w-full max-w-sm sm:max-w-md md:max-w-lg flex flex-col justify-center items-center shadow-lg overflow-hidden rounded-[50%_20%_50%_30%_/30%_60%_20%_50%] m-auto border border-orange-500 my-5"
             style={{
               backgroundImage: "url('/internal.jpg')",
               backgroundSize: "cover",
@@ -153,15 +153,16 @@ export default function TransferPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/90" >
 
               <div className="relative top-1/2 left-1/2  -translate-x-1/2  -translate-y-1/2 z-10 text-center space-y-5">
-                <h2 className="text-lg font-bold text-orange-500 bg-gray-100 w-fit mx-auto rounded px-2">
-                  Internal Transfer
-                </h2>
-                <p className="text-sm text-black bg-gray-50 p-1">
+              <h2 className="text-lg font-bold text-orange-500 drop-shadow-sm drop-shadow-black w-fit mx-auto px-2">
+  Internal Transfer
+</h2>
+
+                <p className="text-sm text-black bg-gray-50  p-1">
                   Quickly move funds between your Savings, Business, Checking, and Investment accounts.
                 </p>
                 <Link
                   href="/admin"
-                  className="text-sm font-semibold bg-orange-500 text-white px-4 py-2 rounded-full"
+                  className="text-sm font-semibold bg-orange-500 text-white px-4 py-3 rounded-lg"
                 >
                   Move Between Accounts
                 </Link>
@@ -171,7 +172,7 @@ export default function TransferPage() {
 
           {/* External */}
           <div
-            className="relative h-64 flex flex-col justify-center items-center shadow-lg overflow-hidden rounded-[40%_60%_30%_70%_/50%_30%_60%_40%] border border-blue-900"
+            className="relative h-64 flex flex-col justify-center items-center shadow-lg overflow-hidden rounded-[40%_60%_30%_70%_/50%_30%_60%_40%] border border-blue-900 my-5"
             style={{
               backgroundImage: "url('/external.jpg')",
               backgroundSize: "cover",
@@ -180,7 +181,7 @@ export default function TransferPage() {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/90" />
             <div className="relative z-10 text-center space-y-5">
-              <h2 className=" text-lg font-bold text-blue-900 bg-gray-100 w-fit mx-auto rounded px-2">
+              <h2 className=" text-lg font-bold text-white drop-shadow-sm drop-shadow-black w-fit mx-auto rounded px-2">
                 External Transfer
               </h2>
               <p className="text-sm text-black bg-gray-50 p-1 ">
@@ -188,7 +189,7 @@ export default function TransferPage() {
               </p>
               <button
                 onClick={() => setShowExternal(true)}
-                className="text-sm font-semibold bg-blue-900 text-white px-4 py-2 rounded-full"
+                className="text-sm font-semibold bg-blue-900 text-white px-4 py-3 rounded-lg"
               >
                 Make External Transfer
               </button>

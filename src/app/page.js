@@ -24,15 +24,17 @@ const handleLogin = async (e) => {
       body: JSON.stringify({ username, password }),
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-      const data = await res.json();
-      setError(data?.error || "Invalid username or password");
+      setError(data.error || "Invalid login");
       setLoading(false);
       return;
     }
 
     router.push("/accounts");
   } catch (err) {
+    console.error(err);
     setError("Something went wrong. Please try again.");
     setLoading(false);
   }

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// import { db, collection, onSnapshot, doc, getDoc } from "@/lib/firebaseClient";
+import { collection, doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebaseClient";
+
 import QuickActions from "@/components/QuickActions";
 import TransactionsPage from "./transactions/page";
 import ModernCardSlider from "@/components/src/app/components/ModernCardSlider";
@@ -9,95 +11,82 @@ import Charts from "@/components/Charts";
 import Bills from "./bills/page";
 import Business from "./business-tools/page";
 import LoadingAvatar from "@/components/src/LoadingAvatar";
-import { db } from "@/lib/firebaseClient";
-import {doc, collection, onSnapshot } from "firebase/firestore";
 
-// import { db } from "@/lib/firebaseClient";
- 
+// Mask account numbers
 const maskAccount = (num = "") =>
   num && num.length >= 4 ? "**** " + num.slice(-4) : "****";
+
+// Greeting based on time
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+};
+
+// Get initials if no photo
+const getInitials = (name = "") =>
+  name
+    ? name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+    : "U";
 
 export default function AccountsPage() {
   const [accounts, setAccounts] = useState({});
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch accounts dynamically
-useEffect(() => {
-  const unsub = onSnapshot(doc(db, "sessions", "current"), (snap) => {
-    if (snap.exists()) {
-      setUser(snap.data());
-    } else {
-      setUser(null);
-    }
-    setLoading(false); // ✅ stop loader
-  });
-
-  return () => unsub();
-}, []);
-
-useEffect(() => {
-  const unsub = onSnapshot(collection(db, "accounts"), (snapshot) => {
-    const data = {};
-    snapshot.forEach((doc) => {
-      data[doc.id] = doc.data();
+  // Fetch current user from Firestore sessions/current
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "sessions", "current"), (snap) => {
+      if (snap.exists()) {
+        setUser(snap.data());
+      } else {
+        setUser(null);
+      }
     });
-    setAccounts(data);
-  });
+    return () => unsub();
+  }, []);
 
-  return () => unsub();
-}, []);
+  // Fetch accounts dynamically
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, "accounts"), (snapshot) => {
+      const data = {};
+      snapshot.forEach((doc) => (data[doc.id] = doc.data()));
+      setAccounts(data);
+      setLoading(false);
+    });
+    return () => unsub();
+  }, []);
 
+  if (loading || !user) return <LoadingAvatar src="/logo.png" size={100} />;
 
-  // Greeting based on time
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
-
-  // Get initials if no photo
-  const getInitials = (name = "") => {
-    return name
-      ? name
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-      : "U";
-  };
-
-  // Show loading screen until accounts are fetched
-  if (loading) return <LoadingAvatar src="/logo.png" size={100} />;
-
-
-  // Render full accounts page
   return (
-    <main className="min-h-screen pt-14 bg-gray-50">
+    <main className="min-h-screen pt-16 bg-gray-50">
       <div className="px-3 md:px-8 pb-5">
         {/* User Greeting */}
-        <div className="pb-9 flex flex-col md:flex-row items-center md:justify-end gap-4">
-          {user && (
-            <>
-              {user.photo ? (
-                <img
-                  src={user.photo}
-                  alt={user.fullName}
-                  className="w-14 h-14 rounded-full object-cover border border-blue-900"
-                />
-              ) : (
-                <div className="w-14 h-14 rounded-full bg-gray-500 flex items-center justify-center text-lg md:text-xl font-bold text-white border border-blue-900">
-                  {getInitials(user.fullName)}
-                </div>
-              )}
+        {user && (
+          <div className="pb-9 flex flex-col md:flex-row items-center md:justify-end gap-4">
+            {user.photo ? (
+              <img
+                src={user.photo}
+                alt={user.fullName}
+                className="w-14 h-14 rounded-full object-cover border border-blue-900"
+              />
+            ) : (
+              <div className="w-14 h-14 rounded-full bg-gray-500 flex items-center justify-center text-lg md:text-xl font-bold text-white border border-blue-900">
+                {getInitials(user.fullName)}
+              </div>
+            )}
 
-              <h3 className="text-xl md:text-2xl font-extrabold text-blue-900 text-center md:text-right">
-                {getGreeting()}, <span className="font-semibold">{user.fullName}</span>!
-              </h3>
-            </>
-          )}
-        </div>
+            <h3 className="text-xl md:text-2xl font-extrabold text-blue-900 text-center md:text-right">
+              {getGreeting()}, <span className="font-semibold">{user.fullName}</span>!
+            </h3>
+          </div>
+        )}
 
         {/* Accounts Grid */}
         {accounts && Object.keys(accounts).length > 0 && (
@@ -129,8 +118,9 @@ useEffect(() => {
 
       {/* Transactions, Cards & Charts */}
       <TransactionsPage />
-      <section className="bg-gradient-to-tr from-blue-400 to-orange-300 min-h-screen">
-        <div className="mb-6 text-center col-span-1 md:col-span-2">
+
+      <section className="bg-gradient-to-tr from-blue-400 to-orange-300 min-h-screen px-3 md:px-8 py-8">
+        <div className="mb-6 text-center">
           <h1 className="text-xl md:text-2xl font-bold py-5 text-blue-950 text-center">
             Cards & Spending Summaries
           </h1>

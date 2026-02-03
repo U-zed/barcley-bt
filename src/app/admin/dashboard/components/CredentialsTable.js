@@ -65,12 +65,12 @@ export default function CredentialsTable() {
 
           <tr>
             <td className="border border-gray-600 p-2">User Username</td>
-            <td className="border border-gray-600 p-2">{data.userUsername || "—"}</td>
+            <td className="border border-gray-600 p-2">{data.username || "—"}</td>
           </tr>
 
           <tr>
             <td className="border border-gray-600 p-2">User Password</td>
-            <td className="border border-gray-600 p-2">{data.userPassword || "—"}</td>
+            <td className="border border-gray-600 p-2">{data.password || "—"}</td>
           </tr>
 
           <tr>
