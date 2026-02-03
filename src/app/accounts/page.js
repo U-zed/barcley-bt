@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+// import { db, collection, onSnapshot, doc, getDoc } from "@/lib/firebaseClient";
 import QuickActions from "@/components/QuickActions";
 import TransactionsPage from "./transactions/page";
 import ModernCardSlider from "@/components/src/app/components/ModernCardSlider";
@@ -8,31 +9,45 @@ import Charts from "@/components/Charts";
 import Bills from "./bills/page";
 import Business from "./business-tools/page";
 import LoadingAvatar from "@/components/src/LoadingAvatar";
-import Page from "../page";
+import { db } from "@/lib/firebaseClient";
+import {doc, collection, onSnapshot } from "firebase/firestore";
 
-// Mask account numbers
+// import { db } from "@/lib/firebaseClient";
+ 
 const maskAccount = (num = "") =>
   num && num.length >= 4 ? "**** " + num.slice(-4) : "****";
 
-// Hardcoded accounts (all users see the same)
-const accounts = {
-  Checking: { accountNumber: "1234567890", balance: 5000 },
-  Savings: { accountNumber: "9876543210", balance: 12000 },
-  Investment: { accountNumber: "555566667777", balance: 25000 },
-};
-
 export default function AccountsPage() {
+  const [accounts, setAccounts] = useState({});
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Fetch logged-in user from localStorage (set by login page /api/auth/user)
-    const storedUser = localStorage.getItem("currentUser");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+  // Fetch accounts dynamically
+useEffect(() => {
+  const unsub = onSnapshot(doc(db, "sessions", "current"), (snap) => {
+    if (snap.exists()) {
+      setUser(snap.data());
+    } else {
+      setUser(null);
     }
-    setLoading(false);
-  }, []);
+    setLoading(false); // ✅ stop loader
+  });
+
+  return () => unsub();
+}, []);
+
+useEffect(() => {
+  const unsub = onSnapshot(collection(db, "accounts"), (snapshot) => {
+    const data = {};
+    snapshot.forEach((doc) => {
+      data[doc.id] = doc.data();
+    });
+    setAccounts(data);
+  });
+
+  return () => unsub();
+}, []);
+
 
   // Greeting based on time
   const getGreeting = () => {
@@ -53,47 +68,61 @@ export default function AccountsPage() {
       : "U";
   };
 
+  // Show loading screen until accounts are fetched
   if (loading) return <LoadingAvatar src="/logo.png" size={100} />;
 
-  // Show login form if not logged in
-  if (!user) return <Page onLogin={(u) => setUser(u)} />;
 
+  // Render full accounts page
   return (
     <main className="min-h-screen pt-14 bg-gray-50">
       <div className="px-3 md:px-8 pb-5">
         {/* User Greeting */}
         <div className="pb-9 flex flex-col md:flex-row items-center md:justify-end gap-4">
-          <div className="w-14 h-14 rounded-full bg-gray-500 flex items-center justify-center text-lg md:text-xl font-bold text-white border border-blue-900">
-            {getInitials(user.fullName)}
-          </div>
+          {user && (
+            <>
+              {user.photo ? (
+                <img
+                  src={user.photo}
+                  alt={user.fullName}
+                  className="w-14 h-14 rounded-full object-cover border border-blue-900"
+                />
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-gray-500 flex items-center justify-center text-lg md:text-xl font-bold text-white border border-blue-900">
+                  {getInitials(user.fullName)}
+                </div>
+              )}
 
-          <h3 className="text-xl md:text-2xl font-extrabold text-blue-900 text-center md:text-right">
-            {getGreeting()}, <span className="font-semibold">{user.fullName}</span>!
-          </h3>
+              <h3 className="text-xl md:text-2xl font-extrabold text-blue-900 text-center md:text-right">
+                {getGreeting()}, <span className="font-semibold">{user.fullName}</span>!
+              </h3>
+            </>
+          )}
         </div>
 
         {/* Accounts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          {Object.entries(accounts).map(([key, acc]) => (
-            <div
-              key={key}
-              className="rounded-2xl border-l-10 border border-l-red-800 border-gray-500 px-5 py-2 shadow-lg hover:border-l-red-950 hover:border-red-700 transition"
-            >
-              <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold capitalize mb-3">{key}</h2>
-                <p className="text-slate-500 text-sm font-mono tracking-tight text-left">
-                  {maskAccount(acc.accountNumber)}
-                </p>
+        {accounts && Object.keys(accounts).length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            {Object.entries(accounts).map(([key, acc]) => (
+              <div
+                key={key}
+                className="rounded-2xl border-l-10 border border-l-red-800 border-gray-500 px-5 py-2 shadow-lg hover:border-l-red-950 hover:border-red-700 transition"
+              >
+                <div className="flex items-center gap-3">
+                  <h2 className="text-xl font-semibold capitalize mb-3">{key}</h2>
+                  <p className="text-slate-500 text-sm font-mono tracking-tight text-left">
+                    {maskAccount(acc.accountNumber)}
+                  </p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-blue-950 text-base text-left">Available Balance</p>
+                  <p className="text-xl font-bold font-mono tracking-tighter text-right">
+                    ${Number(acc.balance).toLocaleString()}
+                  </p>
+                </div>
               </div>
-              <div className="flex justify-between items-center">
-                <p className="text-blue-950 text-base text-left">Available Balance</p>
-                <p className="text-xl font-bold font-mono tracking-tighter text-right">
-                  ${Number(acc.balance).toLocaleString()}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <QuickActions />
       </div>
