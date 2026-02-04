@@ -7,6 +7,7 @@ import { Notification } from "@/components/Notification";
 import { AnimatePresence, motion } from "framer-motion";
 import { db } from "@/lib/firebaseClient";
 import { doc, onSnapshot, deleteDoc } from "firebase/firestore";
+import LoadingAvatar from "@/components/src/LoadingAvatar";
 
 export default function AccountsLayout({ children }) {
   const [user, setUser] = useState(null);
@@ -32,7 +33,7 @@ export default function AccountsLayout({ children }) {
     }
   };
 
-  if (loading) return <p className="text-center py-10">Loading...</p>;
+  if (loading) return <div><LoadingAvatar/></div>;
 
   return (
     <div className="flex min-h-screen">
