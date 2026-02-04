@@ -162,7 +162,7 @@ export default function TransferPage() {
                 </p>
                 <Link
                   href="/admin"
-                  className="text-sm font-semibold bg-orange-500 text-white px-4 py-3 rounded-lg"
+                  className="text-sm font-semibold bg-orange-500 hover:bg-orange-600 cursor-pointer text-white px-4 py-3 rounded-lg transition-all"
                 >
                   Move Between Accounts
                 </Link>
@@ -189,9 +189,9 @@ export default function TransferPage() {
               </p>
               <button
                 onClick={() => setShowExternal(true)}
-                className="text-sm font-semibold bg-blue-900 text-white px-4 py-3 rounded-lg"
+                className="text-sm font-semibold bg-blue-900 hover:bg-blue-950 cursor-pointer text-white px-4 py-3 rounded-lg transition-all"
               >
-                Make External Transfer
+                Schedule Payment
               </button>
             </div>
           </div>
@@ -254,10 +254,10 @@ export default function TransferPage() {
               <label className="text-black text-base font-semibold">Amount:</label>
               <input placeholder="Enter Amount" type="number" className="input w-full p-2 mt-2  bg-gray-200 rounded" onChange={(e) => setAmount(e.target.value)} />
 
-              <p className="text-sm text-orange-500 bg-gray-600 rounded p-2">
+              <p className="text-sm font-semibold text-red-900 bg-gray-200 rounded p-2">
                 ⚠  By clicking Send, you confirm the above details are correct.
                 Transfers cannot be reversed once submitted.{" "}
-                <i className="text-orange-500">
+                <i >
                   Only credit cards, traditional banks and credit unions are supported.
                   Third-party apps such as Cash App, PayPal, Venmo, or Chime are not supported.
                 </i>
@@ -276,7 +276,7 @@ export default function TransferPage() {
                   </button>
                 )}
                 <button className=" bg-blue-900 hover:bg-blue-950 text-sm font-semibold transition-all px-5 py-3 rounded cursor-pointer">
-                  Schedule Payment
+                  Send
                 </button>
               </div>
             </form>

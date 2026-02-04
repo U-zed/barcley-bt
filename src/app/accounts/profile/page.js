@@ -66,6 +66,9 @@ export default function ProfilePage() {
   const maskAddress = (address = "") =>
     address ? "**** " + address.slice(-4) : "—";
 
+  const maskBiz = (biz = "") =>
+    biz ? "**** " + biz.slice(-4) : "—";
+
   const formatDate = (timestamp) => {
     if (!timestamp) return "—";
     if (timestamp.toDate) return timestamp.toDate().toLocaleDateString();
@@ -101,9 +104,8 @@ export default function ProfilePage() {
             <h1 className="text-2xl font-semibold text-blue-950">
               Account Profile
             </h1>
-            <p className="text-gray-600">{user.fullName}</p>
-            <p className="text-xs text-gray-400 mt-1">
-              Doc ID: <span className="font-mono">{user.id}</span>
+            <p className="text-gray-700">{user.fullName}</p>
+            <p className="text-xs text-gray-400 mt-1 font-mono">{maskBiz("HAGK47DG2")}
             </p>
           </div>
         </div>
@@ -124,17 +126,17 @@ export default function ProfilePage() {
         </section>
 
         {/* BUSINESS DETAILS */}
-        <section className="bg-blue-50 rounded border shadow">
+        <section className="bg-blue-50 rounded border shadow mb-5">
           <div className="border-b px-6 py-4">
             <h2 className="font-semibold">Business Information</h2>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 px-6 py-5 text-sm">
-            <Info label="Business Type" value={user.businessType} />
-            <Info label="Username" value={user.username} />
+            <Info label="Business Reg" value={maskBiz("HAGK47DG2")} />
+            <Info label="Business Type" value="Real Estate, Finance & Investments"/>
+            <Info label="Business Region" value="United State & International"/>
             <Info label="Account Status" value="Active" />
-            <Info label="Member Since" value={formatDate(user.createdAt)} />
-            <Info label="Last Updated" value={formatDate(user.updatedAt)} />
+            <Info label="Member Since" value="August, 13 2021" />
           </div>
         </section>
       </div>

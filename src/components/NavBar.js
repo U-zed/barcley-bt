@@ -11,13 +11,12 @@ export default function NavBar({ user, handleLogout }) {
 
   const links = [
     { href: "/accounts", label: "Home" },
-    { href: "/accounts/transfer", label: "Schedule Payment" },
-    { href: "/accounts/new-beneficiary", label: "Add Beneficiary" },
     { href: "/accounts/profile", label: "Profile" },
-    { href: "/accounts/bills", label: "Bill Pay" },
-    { href: "/accounts/business-tools", label: "Business Tools" },
+    { href: "/accounts/transfer", label: "Transfer" },
+    { href: "/accounts/bills", label: "Bills" },
+    { href: "/accounts/business-tools", label: "Business" },
     { href: "/accounts/settings", label: "Settings" },
-    { href: "/admin", label: "Login Core Account" },
+    { href: "/admin", label: "Core Account" },
     { href: "/", label: "Logout", onClick: handleLogout }, // ✅ use prop directly
   ];
 
