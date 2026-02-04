@@ -1,40 +1,47 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, query, orderBy, doc, getDoc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  doc,
+  getDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "@/lib/firebaseClient";
 import { motion } from "framer-motion";
 
 export default function OtpAdminPage() {
   const [otps, setOtps] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // 🔹 Get logged-in user (session)
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "sessions", "current"), (snap) => {
+      if (snap.exists()) setCurrentUser(snap.data());
+      else setCurrentUser(null);
+    });
+    return () => unsub();
+  }, []);
 
   useEffect(() => {
     const q = query(
       collection(db, "otp"),
-      orderBy("createdAt", "desc") // newest first
+      orderBy("createdAt", "desc")
     );
 
     const unsub = onSnapshot(q, async (snap) => {
       const otpData = await Promise.all(
         snap.docs.map(async (d) => {
           const data = d.data();
-          let userName = "Unknown";
-
-          if (data.account) {
-            try {
-              const userSnap = await getDoc(doc(db, "users", data.account));
-              if (userSnap.exists()) {
-                userName = userSnap.data().fullName || userSnap.id;
-              }
-            } catch (err) {
-              console.error("Error fetching user:", err);
-            }
-          }
 
           return {
             id: d.id,
             ...data,
-            userName,
+            // ✅ use logged-in user's full name
+            username: currentUser?.fullName || "Unknown",
           };
         })
       );
@@ -43,7 +50,7 @@ export default function OtpAdminPage() {
     });
 
     return unsub;
-  }, []);
+  }, [currentUser]);
 
   const handleDelete = async (id) => {
     if (!confirm("Delete this OTP?")) return;
@@ -67,7 +74,7 @@ export default function OtpAdminPage() {
             className="bg-slate-900 p-4 border-t border-slate-800 flex justify-between items-start gap-4"
           >
             <div className="space-y-1 text-sm">
-              <p><b>User:</b> {o.userName}</p>
+              {/* <p><b>User:</b> {o.username}</p> */}
               <p><b>OTP:</b> {o.code}</p>
               <p><b>Account:</b> {o.account}</p>
               <p><b>Amount:</b> ${o.amount}</p>

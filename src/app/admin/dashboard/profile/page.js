@@ -277,16 +277,12 @@ export default function AdminDashboardProfile() {
               value={newUserForm.dob}
               onChange={(v) => handleChange("new", "dob", v)}
             />
-            <Input
-              label="Business Type"
-              value={newUserForm.businessType}
-              onChange={(v) => handleChange("new", "businessType", v)}
-            />
-            <Input
+                        <Input
               label="Address"
               value={newUserForm.address}
               onChange={(v) => handleChange("new", "address", v)}
             />
+            <p className="text-white"><b className="text-red-600">Note: </b>Username cannot be changed in future</p>
             <Input
               label="Username"
               value={newUserForm.username}
