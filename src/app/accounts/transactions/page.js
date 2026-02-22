@@ -5,6 +5,11 @@ import { db } from "@/lib/firebaseClient";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  CheckCircle,
+  XCircle,
+  Clock
+} from "lucide-react";
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
@@ -105,15 +110,14 @@ export default function TransactionsPage() {
 
                 {tx.type === "transfer" && (
                   <p
-                    className={`text-xs pt-1 font-semibold ${
-                      tx.status === "pending"
-                        ? "text-yellow-600"
-                        : tx.status === "approved"
+                    className={`text-xs pt-1 font-semibold ${tx.status === "pending"
+                      ? "text-yellow-600"
+                      : tx.status === "approved"
                         ? "text-green-600"
                         : tx.status === "canceled"
-                        ? "text-red-600"
-                        : "text-gray-500"
-                    }`}
+                          ? "text-red-600"
+                          : "text-gray-500"
+                      }`}
                   >
                     {getStatusLabel(tx.status)}
                   </p>
@@ -153,48 +157,64 @@ export default function TransactionsPage() {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", stiffness: 120 }}
-              className="bg-white w-full max-w-2xl rounded-t-2xl p-6"
+              className="bg-gray-50 w-full max-w-2xl rounded-t-2xl p-6"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-lg font-bold mb-4 text-center">
+              <h3 className="text-base font-bold mb-4 text-center">
                 Transaction Details
               </h3>
 
               <div className="space-y-3 text-sm">
-                <div className="flex justify-center p-3">
-                  <span
-                    className={`font-bold text-xl font-mono ${
-                      selectedTx.status === "approved"
-                        ? "text-green-600"
-                        : selectedTx.status === "canceled"
-                        ? "text-red-600"
-                        : "text-yellow-600"
-                    }`}
-                  >
-                    {getStatusLabel(selectedTx.status)}
-                  </span>
-                </div>
+                {/* status */}
+                <div className="flex flex-col items-center justify-center p-4 space-y-2">
+                  {selectedTx.status === "approved" && (
+                    <>
+                      <CheckCircle className="w-10 h-10 text-green-600" />
+                      <span className="font-bold text-xl text-green-600">
+                        Sent
+                      </span>
+                    </>
+                  )}
 
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Recipient</span>
-                  <span>{selectedTx.recipientName || "—"}</span>
-                </div>
+                  {selectedTx.status === "pending" && (
+                    <>
+                      <Clock className="w-10 h-10 text-yellow-500" />
+                      <span className="font-bold text-xl text-yellow-600">
+                        Pending
+                      </span>
+                    </>
+                  )}
 
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Bank</span>
-                  <span>{selectedTx.recipientAccount || "—"}</span>
+                  {selectedTx.status === "canceled" && (
+                    <>
+                      <XCircle className="w-10 h-10 text-red-600" />
+                      <span className="font-bold text-xl text-red-600">
+                        Failed
+                      </span>
+                    </>
+                  )}
                 </div>
-
+                {/* Recipient */}
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Amount</span>
-                  <span className="font-semibold">
+                  <span className="text-gray-900">Recipient</span>
+                  <span className="text-gray-900">{selectedTx.recipientName || "—"}</span>
+                </div>
+                {/* Bank */}
+                <div className="flex justify-between">
+                  <span className="text-gray-900">Bank</span>
+                  <span className="text-gray-900">{selectedTx.recipientAccount || "—"}</span>
+                </div>
+                {/* Amount */}
+                <div className="flex justify-between">
+                  <span className="text-gray-900">Amount</span>
+                  <span className="font-semibold text-gray-900">
                     ${Number(selectedTx.amount || 0).toLocaleString()}
                   </span>
                 </div>
-
+                {/* Date */}
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Date</span>
-                  <span>{formatFullDate(selectedTx.createdAt)}</span>
+                  <span className="text-gray-900">Date</span>
+                  <span className="text-gray-900">{formatFullDate(selectedTx.createdAt)}</span>
                 </div>
 
 
@@ -214,7 +234,7 @@ export default function TransactionsPage() {
 
               <button
                 onClick={() => setSelectedTx(null)}
-                className="mt-6 w-full bg-blue-900 text-white py-2 rounded-lg"
+                className="mt-6 w-full bg-blue-900 hover:bg-blue-950 text-white py-2 rounded-lg"
               >
                 Close
               </button>
