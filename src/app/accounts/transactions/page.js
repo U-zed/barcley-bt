@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import { db } from "@/lib/firebaseClient";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { ArrowUp, ArrowDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [now, setNow] = useState(new Date());
+
+  const [selectedTx, setSelectedTx] = useState(null);
 
   useEffect(() => {
     const q = query(
@@ -31,20 +34,10 @@ export default function TransactionsPage() {
     setVisibleCount((prev) => (prev === 10 ? 20 : 10));
   };
 
-  // Helper to display status nicely
-  const getStatusLabel = (status) => {
-    if (!status) return "Pending"; // default when user sends money
-    if (status === "approved") return "Paid";
-    if (status === "canceled") return "Failed";
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  };
-
- useEffect(() => {
-    // update every minute so month flips automatically
+  useEffect(() => {
     const interval = setInterval(() => {
       setNow(new Date());
-    }, 60 * 1000);
-
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -61,81 +54,81 @@ export default function TransactionsPage() {
       year: "numeric",
     });
 
+  const formatFullDate = (ts) =>
+    ts?.toDate().toLocaleString() || "—";
+
+  const getStatusLabel = (status) => {
+    if (!status) return "Pending";
+    if (status === "approved") return "Sent";
+    if (status === "canceled") return "Failed";
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
 
   return (
-    <div className="min-h-screen px-4 py-8  pt-8">
+    <div className="min-h-screen px-4 py-8 pt-8">
       <h2 className="text-xl md:text-2xl font-bold mb-4 text-blue-950 text-center">
         Transaction History
       </h2>
-      <p className="text-base md:text-lg text-gray-800 pb-10 text-center">
-        Review your recent payments and transfers. Only transactions made through supported banks are listed.
-      </p>
 
       <section className="flex flex-col max-w-2xl mx-auto bg-red-50">
         {transactions.length === 0 && (
-          <p className="text-center text-gray-500">No transactions found.</p>
+          <p className="text-center text-gray-500">
+            No transactions found.
+          </p>
         )}
 
-     {transactions.slice(0, visibleCount).map((tx) => (
-  <div
-    key={tx.id}
-    className="bg-white border-t border-gray-200 p-1 hover:bg-gray-100 transition"
-  >
-    <div className="flex justify-between p-1">
-      <p className="text-gray-900 font-semibold text-lg">
-        {tx.recipientName || tx.senderName || "—"}
-      </p>
-      <div className="bg-gray-100 h-fit rounded-full p-1 text-right">
-        {tx.type === "transfer" ? (
-          <ArrowUp className="text-red-600 w-3 h-3" />
-        ) : (
-          <ArrowDown className="text-green-600 w-3 h-3" />
-        )}
-      </div>
-    </div>
+        {transactions.slice(0, visibleCount).map((tx) => (
+          <div
+            key={tx.id}
+            onClick={() => setSelectedTx(tx)}
+            className="bg-white border-t border-gray-200 p-2 hover:bg-gray-100 transition cursor-pointer"
+          >
+            <div className="flex justify-between p-1">
+              <p className="text-gray-900 font-semibold text-lg">
+                {tx.recipientName || tx.senderName || "—"}
+              </p>
 
-    <div className="flex justify-between p-1">
+              <div className="bg-gray-100 rounded-full p-1">
+                {tx.type === "transfer" ? (
+                  <ArrowUp className="text-red-600 w-3 h-3" />
+                ) : (
+                  <ArrowDown className="text-green-600 w-3 h-3" />
+                )}
+              </div>
+            </div>
 
-<div className="text-left">
-     <p className="text-gray-600 text-xs text-left">
-      {format(previous)} – {format(current)}
-    </p>
-  {/* <p className="text-gray-600 text-xs text-left">
-        {tx.createdAt?.toDate().toLocaleString() || "—"}
-      </p> */}
-      
-        {/* ✅ Only show status for debits */}
-{tx.type === "transfer" && (
-  <p
-    className={`text-xs pt-1 font-semibold ${
-      tx.status === "pending"
-        ? "text-yellow-600"
-        : tx.status === "approved"
-        ? "text-green-600"
-        : tx.status === "canceled"
-        ? "text-red-600"
-        : "text-gray-500"
-    }`}
-  >
-    {tx.status === "approved"
-      ? "Sent"
-      : tx.status === "canceled"
-      ? "Failed"
-      : tx.status?.charAt(0).toUpperCase() + tx.status?.slice(1)}
-  </p>
-)}
-  </div>      
+            <div className="flex justify-between p-1">
+              <div>
+                <p className="text-gray-600 text-xs">
+                  {format(previous)} – {format(current)}
+                </p>
 
-      <p className="font-semibold text-xl text-black text-right">
-  ${Number(tx.amount || 0).toLocaleString()}
-      </p>
-    </div>
-  </div>
-))}
+                {tx.type === "transfer" && (
+                  <p
+                    className={`text-xs pt-1 font-semibold ${
+                      tx.status === "pending"
+                        ? "text-yellow-600"
+                        : tx.status === "approved"
+                        ? "text-green-600"
+                        : tx.status === "canceled"
+                        ? "text-red-600"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {getStatusLabel(tx.status)}
+                  </p>
+                )}
+              </div>
 
+              <p className="font-semibold text-xl text-black">
+                ${Number(tx.amount || 0).toLocaleString()}
+              </p>
+            </div>
+          </div>
+        ))}
       </section>
 
-      {/* Sticky View More / Less Button */}
+      {/* View More Button */}
       {transactions.length > 10 && (
         <button
           onClick={toggleView}
@@ -144,6 +137,91 @@ export default function TransactionsPage() {
           {visibleCount === 10 ? "View More" : "View Less"}
         </button>
       )}
+
+      {/* TRANSACTION DETAILS MODAL */}
+      <AnimatePresence>
+        {selectedTx && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 flex items-end justify-center z-50"
+            onClick={() => setSelectedTx(null)}
+          >
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 120 }}
+              className="bg-white w-full max-w-2xl rounded-t-2xl p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-bold mb-4 text-center">
+                Transaction Details
+              </h3>
+
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-center p-3">
+                  <span
+                    className={`font-bold text-xl font-mono ${
+                      selectedTx.status === "approved"
+                        ? "text-green-600"
+                        : selectedTx.status === "canceled"
+                        ? "text-red-600"
+                        : "text-yellow-600"
+                    }`}
+                  >
+                    {getStatusLabel(selectedTx.status)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Recipient</span>
+                  <span>{selectedTx.recipientName || "—"}</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Bank</span>
+                  <span>{selectedTx.recipientAccount || "—"}</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Amount</span>
+                  <span className="font-semibold">
+                    ${Number(selectedTx.amount || 0).toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Date</span>
+                  <span>{formatFullDate(selectedTx.createdAt)}</span>
+                </div>
+
+
+                {/* 🔴 SHOW CANCEL REASON */}
+                {selectedTx.status === "canceled" &&
+                  selectedTx.cancelReason && (
+                    <div className="bg-red-50 border border-red-200 p-3 rounded">
+                      <p className="text-red-700 text-sm font-semibold">
+                        Transaction Failed
+                      </p>
+                      <p className="text-red-600 text-xs mt-1 font-semibold">
+                        Reason: {selectedTx.cancelReason}
+                      </p>
+                    </div>
+                  )}
+              </div>
+
+              <button
+                onClick={() => setSelectedTx(null)}
+                className="mt-6 w-full bg-blue-900 text-white py-2 rounded-lg"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
